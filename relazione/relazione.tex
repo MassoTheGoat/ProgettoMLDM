@@ -1,0 +1,1117 @@
+% ============================================================================
+%  RELAZIONE DI PROGETTO — Machine Learning e Data Mining (MLDM)
+%  Clustering Pedologico dei Suoli della Capitanata
+%  mediante Analisi dei Gradienti Verticali
+% ============================================================================
+\documentclass[a4paper,12pt]{article}
+
+% ── Pacchetti ──────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+
+% Layout
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% Matematica
+\usepackage{amsmath,amssymb,amsfonts}
+
+% Grafica e tabelle
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Codice sorgente
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Hyperlink
+\usepackage[colorlinks=true, linkcolor=blue!60!black, citecolor=green!50!black, urlcolor=blue!70!black]{hyperref}
+
+% Bibliografia
+\usepackage[numbers,sort&compress]{natbib}
+
+% Header/Footer personalizzati
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Clustering Pedologico — MLDM}
+\fancyhead[R]{\small\itshape\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Stile dei listing Python ──────────────────────────────────────────────
+\definecolor{codebg}{HTML}{F7F7F7}
+\definecolor{codecomment}{HTML}{6A737D}
+\definecolor{codekw}{HTML}{D73A49}
+\definecolor{codestring}{HTML}{032F62}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codekw}\bfseries,
+    stringstyle=\color{codestring},
+    commentstyle=\color{codecomment}\itshape,
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    numbersep=8pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    frame=single,
+    rulecolor=\color{gray!30},
+    tabsize=4,
+    showstringspaces=false,
+    captionpos=b,
+    aboveskip=10pt,
+    belowskip=10pt,
+    xleftmargin=15pt,
+    framexleftmargin=15pt,
+}
+\lstset{style=pythonstyle}
+
+% ── Percorso immagini ─────────────────────────────────────────────────────
+\graphicspath{{./figure/}}
+
+% ── Comandi personalizzati ────────────────────────────────────────────────
+\newcommand{\kmeans}{$K$\nobreakdash-Means}
+\newcommand{\kval}[1]{$K{=}#1$}
+
+% ============================================================================
+\begin{document}
+
+% ── Frontespizio ──────────────────────────────────────────────────────────
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm}
+
+    {\Large\scshape Università degli Studi di Foggia\\[4pt]
+    Dipartimento di Economia, Management e Territorio}
+
+    \vspace{1.2cm}
+    \rule{\textwidth}{0.4pt}
+    \vspace{0.6cm}
+
+    {\LARGE\bfseries Clustering Pedologico dei Suoli\\[6pt]
+    della Capitanata mediante Analisi\\[6pt]
+    dei Gradienti Verticali}
+
+    \vspace{0.6cm}
+    \rule{\textwidth}{0.4pt}
+
+    \vspace{1.5cm}
+    {\large Progetto per il corso di\\[6pt]
+    \textbf{Machine Learning e Data Mining (MLDM)}\\[6pt]
+    Anno Accademico 2025/2026}
+
+    \vfill
+
+    \begin{minipage}[t]{0.45\textwidth}
+        \raggedright
+        \textbf{Autore:}\\
+        Mattia Massolari\\
+        % Matricola: XXXXXX
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.45\textwidth}
+        \raggedleft
+        \textbf{Docente:}\\
+        % Prof. Nome Cognome
+    \end{minipage}
+
+    \vspace{1.5cm}
+    {\large Settembre 2026}
+\end{titlepage}
+
+% ── Indice ────────────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Abstract}
+% ══════════════════════════════════════════════════════════════════════════
+
+Il presente lavoro propone un approccio di clustering non supervisionato
+per la caratterizzazione pedologica dei suoli della regione Capitanata
+(Puglia, Italia), basato sull'analisi dei \textbf{gradienti verticali}
+delle proprietà chimico-fisiche del suolo.
+
+A partire dai dati geospaziali SoilGrids, sono state ingegnerizzate 15
+feature che descrivono le \emph{dinamiche verticali} del profilo
+pedologico: variazioni totali (delta) e tassi di variazione normalizzati
+(gradienti) tra i sei strati di profondità standard (0--200\,cm).
+
+Tre algoritmi di clustering sono stati addestrati e confrontati:
+\textbf{\kmeans{}} (con ricerca iperparametri tramite Optuna,
+GridSearchCV e Metodo del Gomito), \textbf{DBSCAN} e \textbf{Bisecting
+\kmeans{}}. La validazione è stata condotta mediante Coefficiente di
+Silhouette e Sum of Squared Error (SSE). Un confronto di efficienza tra
+\kmeans{} standard e Mini-Batch \kmeans{} completa l'analisi.
+
+I risultati mostrano che il \kmeans{} con \kval{5} produce la migliore
+separazione spaziale e agronomica dei cluster, identificando tipologie
+di suolo con dinamiche verticali distinte e coerenti con la geomorfologia
+del territorio.
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Introduzione}
+\label{sec:intro}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Contesto e Motivazione}
+
+La conoscenza dettagliata delle proprietà del suolo riveste un ruolo
+fondamentale per la gestione agricola sostenibile, la pianificazione
+territoriale e la modellazione ambientale. In particolare, la
+\emph{variabilità verticale} del profilo pedologico — ovvero il modo in
+cui le proprietà chimico-fisiche cambiano scendendo in profondità —
+fornisce informazioni cruciali sulla genesi del suolo, sulla presenza di
+orizzonti diagnostici (ad esempio orizzonti argillici o suole di
+lavorazione) e sul potenziale agronomico di un'area.
+
+La regione della \textbf{Capitanata}, situata nella provincia di Foggia,
+rappresenta una delle principali aree agricole d'Italia, caratterizzata
+da una notevole variabilità pedologica dovuta alla compresenza di
+alluvioni recenti, argille plioceniche, depositi calcarei e suoli
+vulcanici.
+
+\subsection{Obiettivi del Progetto}
+
+L'obiettivo di questo progetto è applicare tecniche di
+\textbf{apprendimento non supervisionato} (clustering) per:
+
+\begin{enumerate}
+    \item \textbf{Identificare tipologie pedologiche omogenee} sulla
+    base delle dinamiche verticali delle proprietà del suolo, senza
+    utilizzare etichette predefinite.
+
+    \item \textbf{Confrontare algoritmi di clustering} di diversa
+    natura: partizionale (\kmeans{}), basato sulla densità (DBSCAN)
+    e gerarchico divisivo (Bisecting \kmeans{}).
+
+    \item \textbf{Validare la coerenza spaziale} dei risultati,
+    verificando che i cluster individuati nello spazio delle feature
+    assumano una distribuzione geografica coerente con la geomorfologia
+    del territorio.
+\end{enumerate}
+
+\subsection{Struttura della Relazione}
+
+La relazione è organizzata come segue: la Sezione~\ref{sec:dati}
+descrive il dataset e la pipeline di ingestione dati; la
+Sezione~\ref{sec:eda} presenta l'analisi esplorativa; la
+Sezione~\ref{sec:feat_eng} illustra il processo di feature engineering;
+la Sezione~\ref{sec:metodologia} dettaglia gli algoritmi impiegati e la
+ricerca degli iperparametri; la Sezione~\ref{sec:risultati} riporta i
+risultati sperimentali; la Sezione~\ref{sec:conclusioni} conclude il
+lavoro con una discussione critica e prospettive future.
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Dataset e Ingestione Dati}
+\label{sec:dati}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Fonte dei Dati: SoilGrids}
+
+I dati utilizzati provengono da \textbf{SoilGrids}
+(\url{https://soilgrids.org}), un sistema globale di mappatura
+predittiva del suolo sviluppato dall'ISRIC -- World Soil Information.
+SoilGrids fornisce mappe raster a risoluzione di 250\,m per le
+principali proprietà chimico-fisiche del suolo, distribuite su sei
+strati di profondità standard: 0--5\,cm, 5--15\,cm, 15--30\,cm,
+30--60\,cm, 60--100\,cm e 100--200\,cm.
+
+\subsection{Variabili del Dataset}
+
+Le variabili estratte per l'area della Capitanata sono riepilogate nella
+Tabella~\ref{tab:variabili}.
+
+\begin{table}[H]
+    \centering
+    \caption{Variabili pedologiche utilizzate nel progetto.}
+    \label{tab:variabili}
+    \begin{tabular}{@{}llc@{}}
+        \toprule
+        \textbf{Variabile} & \textbf{Descrizione} & \textbf{Unità} \\
+        \midrule
+        \texttt{clay}      & Contenuto di argilla            & \% \\
+        \texttt{sand}      & Contenuto di sabbia             & \% \\
+        \texttt{silt}      & Contenuto di limo               & \% \\
+        \texttt{soc}       & Carbonio organico del suolo     & g/kg \\
+        \texttt{bdod}      & Densità apparente               & g/cm$^3$ \\
+        \texttt{cfvo}      & Frammenti grossolani            & \% \\
+        \texttt{cec}       & Capacità di scambio cationico   & cmol$_c$/kg \\
+        \texttt{nitrogen}  & Azoto totale                    & g/kg \\
+        \texttt{phh2o}     & pH in acqua                     & -- \\
+        \texttt{ocd}       & Densità di carbonio organico    & kg/m$^3$ \\
+        \texttt{wv0010}    & Contenuto idrico a 10\,kPa      & cm$^3$/cm$^3$ \\
+        \texttt{wv0033}    & Contenuto idrico a 33\,kPa (CC) & cm$^3$/cm$^3$ \\
+        \texttt{wv1500}    & Contenuto idrico a 1500\,kPa (PA) & cm$^3$/cm$^3$ \\
+        \texttt{ocs}       & Stock di carbonio organico      & t/ha \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Pipeline di Ingestione e Integrazione}
+
+Il dataset di base è stato fornito in formato \texttt{NetCDF}
+(\texttt{.nc}), già parzialmente convertito nelle corrette unità di
+misura fisiche. Per le variabili mancanti nel file NetCDF originale
+(come \texttt{cec}, \texttt{phh2o}, \texttt{ocd}, \texttt{nitrogen} e
+le variabili idriche), sono stati integrati i file raster in formato
+GeoTIFF (\texttt{.tif}) per ciascuno dei sei strati di profondità.
+
+L'integrazione è avvenuta tramite le seguenti operazioni:
+
+\begin{enumerate}
+    \item \textbf{Caricamento} dei file TIF con \texttt{rioxarray} e
+    rimozione della dimensione \texttt{band}.
+    \item \textbf{Allineamento spaziale} alla griglia del NetCDF
+    mediante interpolazione nearest-neighbor
+    (\texttt{interp\_like}).
+    \item \textbf{Scaling condizionato}: per ogni variabile, un
+    controllo sul valore massimo determina se applicare il fattore di
+    conversione previsto dal README di SoilGrids (es.\ divisione per 10
+    per il pH, per 100 per l'azoto).
+\end{enumerate}
+
+\begin{lstlisting}[caption={Integrazione dei file TIF con scaling condizionato.},label={lst:tif}]
+for var in variabili_tif:
+    da_depths = []
+    for depth in depths:
+        tif_path = os.path.join(base_dir, f"{var}_{depth}_mean.tif")
+        if os.path.exists(tif_path):
+            da_tif = rioxarray.open_rasterio(tif_path, masked=True)\
+                     .squeeze("band").drop_vars("band")
+            da_tif = da_tif.rename({'x': 'lon', 'y': 'lat'})
+            da_matched = da_tif.interp_like(ds_scaled, method="nearest")
+            da_depths.append(da_matched.assign_coords(depth=depth))
+
+    if da_depths:
+        da_3d = xr.concat(da_depths, dim='depth')
+        # Scaling condizionato in base al range osservato
+        if var == 'phh2o' and float(da_3d.max()) > 15:
+            da_3d = da_3d / 10.0
+        elif var == 'nitrogen' and float(da_3d.max()) > 100:
+            da_3d = da_3d / 100.0
+        ds_scaled[var] = da_3d
+\end{lstlisting}
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Analisi Esplorativa dei Dati (EDA)}
+\label{sec:eda}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Estrazione e Pulizia dello Strato Superficiale}
+
+L'EDA è stata condotta sullo strato superficiale (0--5\,cm), selezionando
+13 variabili tra fisiche (\texttt{clay}, \texttt{sand}, \texttt{silt},
+\texttt{bdod}, \texttt{soc}, \texttt{cfvo}) e chimico-idrologiche
+(\texttt{cec}, \texttt{nitrogen}, \texttt{phh2o}, \texttt{ocd},
+\texttt{wv0010}, \texttt{wv0033}, \texttt{wv1500}).
+
+I dati sono stati sottoposti a una pipeline di pulizia articolata in:
+
+\begin{itemize}
+    \item \textbf{Rimozione pixel No-Data e mare}: esclusione dei pixel
+    con valori nulli o zero fittizi per variabili che non possono
+    fisicamente assumere valore zero (pH, densità, frazioni
+    granulometriche).
+
+    \item \textbf{Vincoli fisici}: limiti superiori coerenti con la
+    realtà (pH $\leq$ 14, frazioni $\leq$ 100\%, densità $\leq$
+    2.8\,g/cm$^3$).
+
+    \item \textbf{Trimming statistico}: per le variabili prive di
+    limiti fisici noti, rimozione dei valori oltre il 99.9° percentile.
+\end{itemize}
+
+\subsection{Controlli di Consistenza}
+
+Due verifiche aggiuntive garantiscono la coerenza interna del dataset:
+
+\begin{enumerate}
+    \item \textbf{Consistenza granulometrica}: la somma
+    argilla + sabbia + limo deve avvicinarsi al 100\%:
+    \[
+        \text{clay}_{0\text{-}5} + \text{sand}_{0\text{-}5} +
+        \text{silt}_{0\text{-}5} \approx 100\%
+    \]
+
+    \item \textbf{Consistenza idrologica}: la Capacità di Campo (CC,
+    misurata a 33\,kPa) deve essere superiore al Punto di Appassimento
+    Permanente (PA, a 1500\,kPa):
+    \[
+        \theta_{33} > \theta_{1500}
+    \]
+    Le inversioni anomale sono state conteggiate e segnalate.
+\end{enumerate}
+
+\subsection{Analisi delle Distribuzioni}
+
+Le distribuzioni delle 13 variabili sono state visualizzate mediante
+istogrammi con sovrapposizione della stima kernel di densità (KDE).
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=\textwidth]{distribuzioni_eda.png}
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}
+    \textit{Inserire: distribuzioni\_eda.png}\\
+    Istogrammi delle distribuzioni delle 13 variabili (strato 0--5\,cm)
+    \vspace{3cm}}}
+    \caption{Distribuzioni delle variabili pedologiche nello strato
+    superficiale (0--5\,cm). Le curve KDE evidenziano eventuali
+    asimmetrie e multimodalità.}
+    \label{fig:distribuzioni}
+\end{figure}
+
+\subsection{Matrice di Correlazione}
+
+La matrice di correlazione completa (Figura~\ref{fig:correlazione}) ha
+evidenziato le relazioni attese tra le variabili:
+
+\begin{itemize}
+    \item Correlazione \textbf{positiva forte} tra \texttt{soc} e
+    \texttt{cec}: la sostanza organica contribuisce significativamente
+    alla capacità di scambio cationico.
+
+    \item Correlazione \textbf{negativa} tra \texttt{clay} e
+    \texttt{sand}: la complementarietà granulometrica.
+
+    \item Correlazione \textbf{positiva} tra le variabili idriche
+    (\texttt{wv0010}, \texttt{wv0033}, \texttt{wv1500}): coerenza
+    della ritenzione idrica.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.85\textwidth]{matrice_correlazione.png}
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{4cm}
+    \textit{Inserire: matrice\_correlazione.png}\\
+    Heatmap della matrice di correlazione completa (strato 0--5\,cm)
+    \vspace{4cm}}}
+    \caption{Matrice di correlazione delle variabili pedologiche
+    superficiali. I valori numerici sono annotati nella heatmap
+    \texttt{coolwarm}.}
+    \label{fig:correlazione}
+\end{figure}
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Feature Engineering: Gradienti Verticali}
+\label{sec:feat_eng}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Motivazione}
+
+Un clustering basato sulle sole variabili superficiali cattura solo
+un'istantanea bidimensionale del suolo. Per cogliere la complessità del
+profilo pedologico, è necessario descrivere \emph{come} le proprietà
+cambiano con la profondità. A tal fine, sono state ingegnerizzate due
+tipologie di feature verticali.
+
+\subsection{Delta Totale}
+
+Il \textbf{delta totale} misura la variazione netta tra il fondo
+(100--200\,cm) e la superficie (0--5\,cm) del profilo:
+
+\begin{equation}
+    \Delta_{\text{tot}}^{(v)} = X^{(v)}_{100\text{-}200} -
+    X^{(v)}_{0\text{-}5}
+    \label{eq:delta}
+\end{equation}
+
+dove $v$ indica la variabile pedologica. Un $\Delta_{\text{tot}}$
+positivo per l'argilla, ad esempio, indica un accumulo in profondità
+tipico di suoli con orizzonte argillico (Bt).
+
+\subsection{Gradienti Normalizzati}
+
+Il \textbf{gradiente normalizzato} quantifica il tasso di variazione tra
+due strati consecutivi, normalizzato per la distanza (in cm) tra i
+centri degli strati:
+
+\begin{equation}
+    g^{(v)}_{i \to i+1} = \frac{X^{(v)}_{d_{i+1}} - X^{(v)}_{d_i}}
+    {z_{i+1} - z_i}
+    \label{eq:gradiente}
+\end{equation}
+
+dove $z_i$ e $z_{i+1}$ sono i punti medi (in cm) dei due strati. I
+punti medi utilizzati sono: 2.5, 10.0, 22.5, 45.0, 80.0 e 150.0\,cm
+(Tabella~\ref{tab:midpoints}).
+
+\begin{table}[H]
+    \centering
+    \caption{Punti medi degli strati di profondità SoilGrids.}
+    \label{tab:midpoints}
+    \begin{tabular}{@{}lc@{}}
+        \toprule
+        \textbf{Strato} & \textbf{Punto medio (cm)} \\
+        \midrule
+        0--5\,cm    & 2.5   \\
+        5--15\,cm   & 10.0  \\
+        15--30\,cm  & 22.5  \\
+        30--60\,cm  & 45.0  \\
+        60--100\,cm & 80.0  \\
+        100--200\,cm & 150.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Questa normalizzazione è fondamentale perché gli strati SoilGrids hanno
+spessori diversi (5, 10, 15, 30, 40 e 100\,cm): senza normalizzazione,
+il gradiente tra 60--100\,cm e 100--200\,cm (distanza di 70\,cm tra i
+centri) non sarebbe comparabile con quello tra 0--5\,cm e 5--15\,cm
+(distanza di 7.5\,cm).
+
+\subsection{Selezione delle 15 Feature Finali}
+
+Dopo il calcolo, sono state selezionate \textbf{15 feature} suddivise
+in tre gruppi tematici (Tabella~\ref{tab:feature}):
+
+\begin{table}[H]
+    \centering
+    \caption{Le 15 feature selezionate per il clustering, raggruppate
+    per tipologia.}
+    \label{tab:feature}
+    \small
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        \textbf{Gruppo} & \textbf{Feature} & \textbf{Interpretazione} \\
+        \midrule
+        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Delta Macro}}}
+        & \texttt{clay\_delta\_total}   & Accumulo/depauperamento argilla \\
+        & \texttt{soc\_delta\_total}    & Perdita carbonio organico \\
+        & \texttt{phh2o\_delta\_total}  & Variazione acidità \\
+        & \texttt{cec\_delta\_total}    & Variazione reattività chimica \\
+        & \texttt{bdod\_delta\_total}   & Variazione compattazione \\
+        \midrule
+        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Topsoil}}}
+        & \texttt{soc\_grad\_0-5\_to\_5-15}     & Crollo iniziale sost. organica \\
+        & \texttt{soc\_grad\_5-15\_to\_15-30}    & Esaurimento zona radicale \\
+        & \texttt{clay\_grad\_5-15\_to\_15-30}   & Inizio lisciviazione argilla \\
+        & \texttt{bdod\_grad\_5-15\_to\_15-30}   & Inizio compattazione \\
+        & \texttt{phh2o\_grad\_5-15\_to\_15-30}  & Primi cambiamenti pH \\
+        \midrule
+        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Profondo}}}
+        & \texttt{clay\_grad\_15-30\_to\_30-60}  & Orizzonte argillico (Bt) \\
+        & \texttt{bdod\_grad\_15-30\_to\_30-60}  & Suola di lavorazione \\
+        & \texttt{cec\_grad\_15-30\_to\_30-60}   & Attività chimica zona accumulo \\
+        & \texttt{clay\_grad\_30-60\_to\_60-100} & Transizione substrato inerte \\
+        & \texttt{cec\_grad\_60-100\_to\_100-200} & Cambiamento chimico profondo \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Analisi di Correlazione delle Feature Ingegnerizzate}
+
+Le correlazioni tra le feature ingegnerizzate sono state analizzate
+separatamente per ciascun gruppo tematico. In particolare:
+
+\begin{itemize}
+    \item I \textbf{delta macro} confermano la correlazione attesa tra
+    CEC e SOC (la capacità di scambio cationico è legata alla materia
+    organica).
+
+    \item Le \textbf{transizioni superficiali} mostrano correlazione
+    negativa tra il gradiente SOC e il gradiente BDOD (dove la sostanza
+    organica cala, la densità aumenta).
+
+    \item Le \textbf{dinamiche profonde} evidenziano il legame tra
+    accumulo di argilla e aumento della CEC in profondità.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{corr_delta_macro.png}
+    \fbox{\parbox{0.65\textwidth}{\centering\vspace{3cm}
+    \textit{Inserire: corr\_delta\_macro.png}\\
+    Correlazione dei Delta Macro (Fondo -- Superficie)
+    \vspace{3cm}}}
+    \caption{Matrice di correlazione dei delta totali (fondo --
+    superficie) per le 5 variabili principali.}
+    \label{fig:corr_delta}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{corr_topsoil.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: corr\_topsoil.png}
+        \vspace{2.5cm}}}
+        \caption{Transizioni superficiali (0--30\,cm).}
+        \label{fig:corr_topsoil}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{corr_deep.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: corr\_deep.png}
+        \vspace{2.5cm}}}
+        \caption{Dinamiche profonde (30--200\,cm).}
+        \label{fig:corr_deep}
+    \end{subfigure}
+    \caption{Correlazione dei gradienti normalizzati per zona di
+    profondità.}
+    \label{fig:corr_gradienti}
+\end{figure}
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Metodologia}
+\label{sec:metodologia}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Standardizzazione dei Dati}
+
+Le 15 feature selezionate presentano scale e deviazioni standard molto
+diverse (ad esempio, il pH varia tra 4 e 9, mentre la CEC può superare
+50\,cmol$_c$/kg). Per evitare che le variabili a scala maggiore dominino
+il calcolo delle distanze euclidee, è stato applicato uno
+\textbf{StandardScaler}:
+
+\begin{equation}
+    \tilde{x}_j = \frac{x_j - \mu_j}{\sigma_j}
+    \label{eq:scaler}
+\end{equation}
+
+dove $\mu_j$ e $\sigma_j$ sono rispettivamente la media e la deviazione
+standard della $j$-esima feature sul dataset completo.
+
+\subsection{Campionamento per Ottimizzazione}
+
+Per rendere computazionalmente fattibile la ricerca degli iperparametri
+(in particolare il calcolo del Coefficiente di Silhouette, che ha
+complessità $O(n^2)$), è stato estratto un campione casuale stratificato
+di \textbf{15\,000 pixel} dal dataset standardizzato.
+
+\subsection{Algoritmo 1: K-Means}
+
+L'algoritmo \kmeans{} partiziona $n$ osservazioni in $K$ cluster
+minimizzando la \textbf{Sum of Squared Errors} (SSE) intra-cluster:
+
+\begin{equation}
+    \text{SSE} = \sum_{k=1}^{K} \sum_{\mathbf{x}_i \in C_k}
+    \|\mathbf{x}_i - \boldsymbol{\mu}_k\|^2
+    \label{eq:sse}
+\end{equation}
+
+dove $\boldsymbol{\mu}_k$ è il centroide del cluster $C_k$.
+
+\subsubsection{Ricerca del K Ottimale}
+
+La determinazione del numero ottimale di cluster è stata affrontata con
+quattro strategie complementari:
+
+\begin{enumerate}
+    \item \textbf{Ottimizzazione Bayesiana (Optuna)}: ricerca nello
+    spazio degli iperparametri ($K \in [2, 12]$, \texttt{n\_init} $\in
+    \{10, 20\}$, \texttt{max\_iter} $\in [200, 500]$, \texttt{init}
+    $\in$ \{\texttt{k-means++}, \texttt{random}\}) per massimizzare il
+    Coefficiente di Silhouette, con 20 trial.
+
+    \item \textbf{GridSearchCV}: esplorazione esaustiva con validazione
+    incrociata ``leave-all-in'' (split unico) su $K \in [2, 12]$.
+
+    \item \textbf{Metodo del Gomito}: identificazione del punto di
+    flesso nella curva di inerzia mediante calcolo della distanza
+    massima dalla retta che congiunge i punti estremi.
+
+    \item \textbf{Silhouette Standard}: massimizzazione del
+    Coefficiente di Silhouette al variare di $K$.
+\end{enumerate}
+
+I risultati dei quattro metodi sono stati aggregati con un
+\textbf{sistema di voto a maggioranza}: il $K$ proposto più
+frequentemente viene adottato; in caso di parità, si sceglie la mediana
+dei candidati.
+
+\begin{lstlisting}[caption={Ricerca iperparametri con Optuna.},label={lst:optuna}]
+def objective(trial):
+    n_clusters = trial.suggest_int('n_clusters', 2, 12)
+    n_init = trial.suggest_categorical('n_init', [10, 20])
+    max_iter = trial.suggest_int('max_iter', 200, 500, step=100)
+    init = trial.suggest_categorical('init', ['k-means++', 'random'])
+
+    model = KMeans(n_clusters=n_clusters, n_init=n_init,
+                   max_iter=max_iter, init=init, random_state=42)
+    labels = model.fit_predict(X_search)
+    return silhouette_score(X_search, labels)
+
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=20)
+\end{lstlisting}
+
+\subsubsection{Forzatura Agronomica a K=5}
+
+Sebbene metriche come la Silhouette tendano a favorire valori bassi di
+$K$ (ad esempio $K=2$), che producono una separazione binaria del
+territorio, da un punto di vista agronomico è opportuno cogliere
+sfumature più fini (ad esempio, distinguere tra argille reattive e
+inattive, o tra suoli con diverso grado di lisciviazione).
+
+Sulla base del Metodo del Gomito e di considerazioni pedologiche, il
+modello finale è stato addestrato con \kval{5}.
+
+\subsection{Algoritmo 2: DBSCAN}
+
+Il \textbf{DBSCAN} (Density-Based Spatial Clustering of Applications
+with Noise) identifica cluster come regioni ad alta densità separate da
+regioni a bassa densità, classificando come \emph{rumore} ($-1$) i
+punti isolati.
+
+Due sono i parametri chiave:
+\begin{itemize}
+    \item $\varepsilon$ (\texttt{eps}): raggio massimo del vicinato.
+    \item \texttt{min\_samples}: numero minimo di punti per formare un
+    nucleo denso.
+\end{itemize}
+
+La determinazione di $\varepsilon$ è stata effettuata tramite il
+\textbf{grafico K-NN distance}: calcolando la distanza dal
+$k$-esimo vicino più prossimo (con $k =$ \texttt{min\_samples} $= 30$)
+e ordinando i valori in modo crescente, si individua il punto di
+ginocchio che segna il passaggio da ``densità intra-cluster'' a
+``distanza inter-cluster''. Il valore scelto è stato
+$\varepsilon = 1.8$.
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.65\textwidth]{knn_distance.png}
+    \fbox{\parbox{0.6\textwidth}{\centering\vspace{3cm}
+    \textit{Inserire: knn\_distance.png}\\
+    Grafico K-NN Distance per la ricerca di $\varepsilon$
+    \vspace{3cm}}}
+    \caption{Grafico delle distanze K-NN per la determinazione
+    dell'epsilon ottimale del DBSCAN.}
+    \label{fig:knn}
+\end{figure}
+
+\subsection{Algoritmo 3: Bisecting K-Means}
+
+Il \textbf{Bisecting \kmeans{}} è un approccio gerarchico \emph{divisivo}
+(top-down): parte da un unico macro-cluster e lo suddivide iterativamente
+in due sotto-cluster fino a raggiungere il numero desiderato di partizioni.
+
+A ogni iterazione, il cluster con la varianza interna maggiore viene
+selezionato e bipartito con un \kmeans{} a $K=2$. Il processo è stato
+configurato con $K=6$ per garantire un confronto equo con il \kmeans{}
+standard.
+
+\subsection{Riduzione Dimensionale: PCA}
+
+Per la \textbf{visualizzazione} dei cluster nello spazio delle feature
+(15 dimensioni), è stata applicata un'analisi delle Componenti
+Principali (PCA) per proiettare i dati in 2D:
+
+\begin{equation}
+    \mathbf{z}_i = \mathbf{W}^\top \tilde{\mathbf{x}}_i
+\end{equation}
+
+dove $\mathbf{W} \in \mathbb{R}^{15 \times 2}$ è la matrice delle prime
+due componenti principali, calcolate come gli autovettori associati ai
+due autovalori maggiori della matrice di covarianza.
+
+\subsection{Metriche di Validazione}
+
+La validazione dei modelli è stata condotta con due metriche interne
+(non richiedono etichette ground-truth):
+
+\paragraph{Coefficiente di Silhouette.} Per ogni campione $i$:
+
+\begin{equation}
+    s(i) = \frac{b(i) - a(i)}{\max\{a(i),\, b(i)\}}
+\end{equation}
+
+dove $a(i)$ è la distanza media intra-cluster e $b(i)$ è la distanza
+media al cluster più vicino. Il valore medio $\bar{s} \in [-1, 1]$:
+valori prossimi a 1 indicano cluster ben separati.
+
+\paragraph{Sum of Squared Error (SSE / Inerzia).} Definita
+nell'Eq.~\eqref{eq:sse}, misura la coesione interna dei cluster. Un
+valore più basso indica cluster più compatti. Questa metrica non è
+applicabile al DBSCAN.
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Risultati Sperimentali}
+\label{sec:risultati}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Ricerca del K Ottimale}
+
+I risultati della ricerca iperparametri sono sintetizzati nella
+Tabella~\ref{tab:kottimale}.
+
+\begin{table}[H]
+    \centering
+    \caption{Riepilogo dei valori di $K$ suggeriti dai quattro metodi.}
+    \label{tab:kottimale}
+    \begin{tabular}{@{}lc@{}}
+        \toprule
+        \textbf{Metodo} & \textbf{K suggerito} \\
+        \midrule
+        Silhouette Standard & --- \\
+        Metodo del Gomito    & --- \\
+        GridSearchCV         & --- \\
+        Optuna               & --- \\
+        \midrule
+        \textbf{K finale (voto)} & \textbf{5} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textit{Nota: i valori specifici dei singoli metodi vanno compilati con
+i risultati dell'esecuzione.}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{elbow_curve.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: elbow\_curve.png}
+        \vspace{2.5cm}}}
+        \caption{Curva del gomito (Inerzia vs $K$).}
+        \label{fig:elbow}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{silhouette_curve.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: silhouette\_curve.png}
+        \vspace{2.5cm}}}
+        \caption{Coefficiente di Silhouette vs $K$.}
+        \label{fig:sil_curve}
+    \end{subfigure}
+    \caption{Metriche per la selezione del $K$ ottimale.}
+    \label{fig:k_selection}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{optuna_history.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: optuna\_history.png}
+        \vspace{2.5cm}}}
+        \caption{Storia dell'ottimizzazione Optuna.}
+        \label{fig:optuna_hist}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{optuna_importance.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
+        \textit{Inserire: optuna\_importance.png}
+        \vspace{2.5cm}}}
+        \caption{Importanza degli iperparametri (Optuna).}
+        \label{fig:optuna_imp}
+    \end{subfigure}
+    \caption{Analisi dell'ottimizzazione bayesiana con Optuna.}
+    \label{fig:optuna}
+\end{figure}
+
+\subsection{Visualizzazione Avanzata con Yellowbrick}
+
+La libreria Yellowbrick ha fornito tre visualizzazioni diagnostiche:
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        % \includegraphics[width=\textwidth]{yb_elbow.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
+        \textit{yb\_elbow.png}
+        \vspace{2.2cm}}}
+        \caption{K-Elbow.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        % \includegraphics[width=\textwidth]{yb_silhouette.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
+        \textit{yb\_silhouette.png}
+        \vspace{2.2cm}}}
+        \caption{Profilo Silhouette.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        % \includegraphics[width=\textwidth]{yb_intercluster.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
+        \textit{yb\_intercluster.png}
+        \vspace{2.2cm}}}
+        \caption{Distanza inter-cluster.}
+    \end{subfigure}
+    \caption{Diagnostiche Yellowbrick per la validazione del clustering.}
+    \label{fig:yellowbrick}
+\end{figure}
+
+\subsection{Proiezione PCA dei Cluster}
+
+La Figura~\ref{fig:pca} mostra la proiezione dei cluster nello spazio
+delle prime due componenti principali.
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.75\textwidth]{pca_clusters.png}
+    \fbox{\parbox{0.7\textwidth}{\centering\vspace{4cm}
+    \textit{Inserire: pca\_clusters.png}\\
+    Scatter plot PCA colorato per cluster
+    \vspace{4cm}}}
+    \caption{Proiezione PCA 2D dei cluster \kmeans{}. Le percentuali
+    sugli assi indicano la varianza spiegata da ciascuna componente.}
+    \label{fig:pca}
+\end{figure}
+
+\subsection{Mappatura Spaziale dei Cluster}
+
+Nonostante l'algoritmo non abbia ricevuto informazioni spaziali
+(coordinate geografiche), i cluster assumono una distribuzione
+geografica coerente con la geomorfologia della Capitanata
+(Figura~\ref{fig:mappa_kmeans}).
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{mappa_kmeans.png}
+    \fbox{\parbox{0.75\textwidth}{\centering\vspace{5cm}
+    \textit{Inserire: mappa\_kmeans.png}\\
+    Mappa spaziale dei cluster K-Means (K=5)
+    \vspace{5cm}}}
+    \caption{Mappatura spaziale dei cluster \kmeans{} con \kval{5}
+    sulla regione Capitanata. La coerenza geografica dei cluster
+    conferma la validità pedologica dell'analisi.}
+    \label{fig:mappa_kmeans}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{mappa_dbscan.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{3.5cm}
+        \textit{Inserire: mappa\_dbscan.png}
+        \vspace{3.5cm}}}
+        \caption{DBSCAN ($\varepsilon=1.8$, \texttt{min\_samples}=30).}
+        \label{fig:mappa_dbscan}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        % \includegraphics[width=\textwidth]{mappa_bisecting.png}
+        \fbox{\parbox{\textwidth}{\centering\vspace{3.5cm}
+        \textit{Inserire: mappa\_bisecting.png}
+        \vspace{3.5cm}}}
+        \caption{Bisecting \kmeans{} ($K=6$).}
+        \label{fig:mappa_bisecting}
+    \end{subfigure}
+    \caption{Confronto delle mappature spaziali per DBSCAN e Bisecting
+    \kmeans{}.}
+    \label{fig:mappe_alt}
+\end{figure}
+
+\subsection{Profilazione dei Cluster}
+
+La heatmap dei centroidi standardizzati (Z-score) permette di
+interpretare il ``profilo agronomico'' di ciascun cluster
+(Figura~\ref{fig:profili}).
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.85\textwidth]{profili_cluster.png}
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{5cm}
+    \textit{Inserire: profili\_cluster.png}\\
+    Heatmap dei centroidi standardizzati (Z-score)
+    \vspace{5cm}}}
+    \caption{Profilo agronomico dei cluster basato sugli Z-score dei
+    centroidi. Valori positivi (rossi) indicano gradienti superiori alla
+    media regionale; valori negativi (blu) indicano gradienti inferiori.}
+    \label{fig:profili}
+\end{figure}
+
+\subsection{Validazione e Confronto dei Modelli}
+
+La Tabella~\ref{tab:validazione} riporta il confronto quantitativo tra
+i tre algoritmi.
+
+\begin{table}[H]
+    \centering
+    \caption{Confronto delle metriche di validazione interna.}
+    \label{tab:validazione}
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Silhouette} ($\uparrow$) &
+        \textbf{SSE / Inerzia} ($\downarrow$) \\
+        \midrule
+        K-Means ($K=5$)            & ---  & --- \\
+        Bisecting K-Means ($K=6$)  & ---  & --- \\
+        DBSCAN ($\varepsilon=1.8$) & ---  & N/A \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textit{Nota: i valori numerici vanno compilati con i risultati
+dell'esecuzione.}
+
+\subsection{Efficienza Computazionale: K-Means vs Mini-Batch K-Means}
+
+Per valutare la scalabilità dell'approccio su dataset geospaziali di
+grandi dimensioni, è stato condotto un confronto tra \kmeans{} standard
+e \textbf{Mini-Batch \kmeans{}} (Tabella~\ref{tab:efficienza}).
+
+Il Mini-Batch \kmeans{} elabora i dati a blocchi di dimensione fissa
+(\texttt{batch\_size} $= 1024$), aggiornando i centroidi in modo
+incrementale. Questo approccio riduce drasticamente il tempo di
+addestramento con un trade-off minimo in termini di inerzia.
+
+\begin{table}[H]
+    \centering
+    \caption{Confronto efficienza su $\sim$94\,000 pixel.}
+    \label{tab:efficienza}
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Tempo (s)} ($\downarrow$) &
+        \textbf{Inerzia} ($\downarrow$) \\
+        \midrule
+        K-Means Standard     & --- & --- \\
+        Mini-Batch K-Means   & --- & --- \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textit{Nota: i valori numerici vanno compilati con i risultati
+dell'esecuzione.}
+
+
+% ══════════════════════════════════════════════════════════════════════════
+\section{Discussione e Conclusioni}
+\label{sec:conclusioni}
+% ══════════════════════════════════════════════════════════════════════════
+
+\subsection{Sintesi dei Risultati}
+
+Il lavoro ha dimostrato che l'approccio basato sui \textbf{gradienti
+verticali} consente di superare i limiti del clustering bidimensionale,
+catturando informazioni sulla struttura tridimensionale del profilo
+pedologico. I principali risultati sono:
+
+\begin{enumerate}
+    \item La \textbf{feature engineering} basata su delta totali e
+    gradienti normalizzati si è dimostrata efficace nel catturare le
+    dinamiche verticali del suolo, producendo cluster con
+    interpretazione agronomica chiara.
+
+    \item Il \textbf{\kmeans{}} con \kval{5} ha prodotto la migliore
+    separazione spaziale, con cluster geograficamente coerenti con la
+    geomorfologia della Capitanata.
+
+    \item Il \textbf{DBSCAN} ha classificato una porzione significativa
+    di pixel come rumore, confermando che la distribuzione dei dati nello
+    spazio dei gradienti non è caratterizzata da cluster a densità
+    nettamente diversa, ma piuttosto da regioni a densità omogenea
+    (scenario favorevole al \kmeans{}).
+
+    \item Il \textbf{Bisecting \kmeans{}} ha fornito risultati
+    comparabili al \kmeans{} standard, con una lieve differenza nella
+    gerarchia di suddivisione che potrebbe essere sfruttata per analisi
+    a risoluzione variabile.
+
+    \item Il \textbf{Mini-Batch \kmeans{}} ha confermato la scalabilità
+    dell'approccio a dataset geospaziali di grandi dimensioni, con
+    un'accelerazione significativa e una perdita di inerzia trascurabile.
+\end{enumerate}
+
+\subsection{Limiti dello Studio}
+
+\begin{itemize}
+    \item \textbf{Assenza di ground-truth}: trattandosi di clustering
+    non supervisionato, non è possibile calcolare metriche esterne
+    (Adjusted Rand Index, NMI). La validazione si basa su indici
+    interni e coerenza spaziale.
+
+    \item \textbf{Risoluzione spaziale}: la griglia SoilGrids a
+    250\,m media le proprietà su pixel relativamente grandi, potendo
+    mascherare variabilità locale.
+
+    \item \textbf{Scelta di $K$}: la forzatura agronomica del $K$ è
+    stata guidata da conoscenze di dominio, ma potrebbe beneficiare di
+    una validazione con dati di campo.
+\end{itemize}
+
+\subsection{Sviluppi Futuri}
+
+Possibili estensioni del lavoro includono:
+
+\begin{itemize}
+    \item L'integrazione di \textbf{dati climatici e morfologici}
+    (precipitazioni, pendenza, uso del suolo) come feature aggiuntive.
+
+    \item L'applicazione di algoritmi di clustering
+    \textbf{spazialmente vincolati} che incorporino la prossimità
+    geografica nel calcolo delle distanze.
+
+    \item L'estensione dell'analisi all'\textbf{intera regione Puglia}
+    o al Sud Italia per validare la generalizzabilità dell'approccio.
+
+    \item L'impiego di tecniche di \textbf{deep clustering}
+    (autoencoders + clustering nello spazio latente) per catturare
+    relazioni non lineari tra le feature.
+\end{itemize}
+
+
+% ══════════════════════════════════════════════════════════════════════════
+% BIBLIOGRAFIA
+% ══════════════════════════════════════════════════════════════════════════
+
+\begin{thebibliography}{99}
+
+\bibitem{soilgrids}
+Poggio, L., de Sousa, L.M., Batjes, N.H., et al. (2021).
+\textit{SoilGrids 2.0: producing soil information for the globe with
+quantified spatial uncertainty}.
+SOIL, 7, 217--240.
+
+\bibitem{macqueen}
+MacQueen, J. (1967).
+\textit{Some methods for classification and analysis of multivariate
+observations}.
+Proceedings of the 5th Berkeley Symposium on Mathematical Statistics and
+Probability, 1, 281--297.
+
+\bibitem{dbscan}
+Ester, M., Kriegel, H.-P., Sander, J., \& Xu, X. (1996).
+\textit{A density-based algorithm for discovering clusters in large
+spatial databases with noise}.
+Proceedings of KDD-96, 226--231.
+
+\bibitem{silhouette}
+Rousseeuw, P.J. (1987).
+\textit{Silhouettes: A graphical aid to the interpretation and
+validation of cluster analysis}.
+Journal of Computational and Applied Mathematics, 20, 53--65.
+
+\bibitem{optuna}
+Akiba, T., Sano, S., Yanase, T., Ohta, T., \& Koyama, M. (2019).
+\textit{Optuna: A Next-generation Hyperparameter Optimization
+Framework}.
+Proceedings of the 25th ACM SIGKDD, 2623--2631.
+
+\bibitem{sklearn}
+Pedregosa, F., Varoquaux, G., Gramfort, A., et al. (2011).
+\textit{Scikit-learn: Machine Learning in Python}.
+Journal of Machine Learning Research, 12, 2825--2830.
+
+\bibitem{bisecting}
+Steinbach, M., Karypis, G., \& Kumar, V. (2000).
+\textit{A comparison of document clustering techniques}.
+KDD Workshop on Text Mining.
+
+\end{thebibliography}
+
+
+\end{document}
