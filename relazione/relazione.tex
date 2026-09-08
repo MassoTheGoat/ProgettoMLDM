@@ -32,7 +32,7 @@
 \usepackage{xcolor}
 
 % Hyperlink
-\usepackage[colorlinks=true, linkcolor=blue!60!black, citecolor=green!50!black, urlcolor=blue!70!black]{hyperref}
+\usepackage[colorlinks=true, linkcolor=black!60!black, citecolor=green!50!black, urlcolor=black!70!black]{hyperref}
 
 % Bibliografia
 \usepackage[numbers,sort&compress]{natbib}
@@ -89,20 +89,22 @@
 % ── Frontespizio ──────────────────────────────────────────────────────────
 \begin{titlepage}
     \centering
-    \vspace*{1.5cm}
+    \vspace*{\fill}
 
-    {\Large\scshape Università degli Studi di Foggia\\[4pt]
-    Dipartimento di Economia, Management e Territorio}
+    {\Large\scshape Università degli Studi di Brescia\\[4pt]
+    Dipartimento di Ingegneria dell'Informazione}
 
     \vspace{1.2cm}
     \rule{\textwidth}{0.4pt}
     \vspace{0.6cm}
+    \rule{\textwidth}{0.4pt}
+    \vspace{1cm}
 
-    {\LARGE\bfseries Clustering Pedologico dei Suoli\\[6pt]
-    della Capitanata mediante Analisi\\[6pt]
+    {\LARGE\bfseries Clustering Pedologico dei Suoli\\[15pt]
+    della Capitanata mediante Analisi\\[15pt]
     dei Gradienti Verticali}
 
-    \vspace{0.6cm}
+    \vspace{0.8cm}
     \rule{\textwidth}{0.4pt}
 
     \vspace{1.5cm}
@@ -110,23 +112,15 @@
     \textbf{Machine Learning e Data Mining (MLDM)}\\[6pt]
     Anno Accademico 2025/2026}
 
-    \vfill
+    \vspace{2cm}
 
-    \begin{minipage}[t]{0.45\textwidth}
-        \raggedright
-        \textbf{Autore:}\\
-        Mattia Massolari\\
-        % Matricola: XXXXXX
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.45\textwidth}
-        \raggedleft
-        \textbf{Docente:}\\
-        % Prof. Nome Cognome
-    \end{minipage}
+    {\large \textbf{Autori:}\\[6pt]
+    Mattia Massolari\\
+    Matricola: 740458\\[8pt]
+    Marco Mazzardi\\
+    Matricola: 741265}
 
-    \vspace{1.5cm}
-    {\large Settembre 2026}
+    \vspace*{\fill}
 \end{titlepage}
 
 % ── Indice ────────────────────────────────────────────────────────────────
@@ -201,18 +195,6 @@ L'obiettivo di questo progetto è applicare tecniche di
     assumano una distribuzione geografica coerente con la geomorfologia
     del territorio.
 \end{enumerate}
-
-\subsection{Struttura della Relazione}
-
-La relazione è organizzata come segue: la Sezione~\ref{sec:dati}
-descrive il dataset e la pipeline di ingestione dati; la
-Sezione~\ref{sec:eda} presenta l'analisi esplorativa; la
-Sezione~\ref{sec:feat_eng} illustra il processo di feature engineering;
-la Sezione~\ref{sec:metodologia} dettaglia gli algoritmi impiegati e la
-ricerca degli iperparametri; la Sezione~\ref{sec:risultati} riporta i
-risultati sperimentali; la Sezione~\ref{sec:conclusioni} conclude il
-lavoro con una discussione critica e prospettive future.
-
 
 % ══════════════════════════════════════════════════════════════════════════
 \section{Dataset e Ingestione Dati}
@@ -363,11 +345,7 @@ istogrammi con sovrapposizione della stima kernel di densità (KDE).
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=\textwidth]{distribuzioni_eda.png}
-    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}
-    \textit{Inserire: distribuzioni\_eda.png}\\
-    Istogrammi delle distribuzioni delle 13 variabili (strato 0--5\,cm)
-    \vspace{3cm}}}
+    \includegraphics[width=\textwidth]{distribuzioni_eda.png}
     \caption{Distribuzioni delle variabili pedologiche nello strato
     superficiale (0--5\,cm). Le curve KDE evidenziano eventuali
     asimmetrie e multimodalità.}
@@ -394,11 +372,7 @@ evidenziato le relazioni attese tra le variabili:
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.85\textwidth]{matrice_correlazione.png}
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{4cm}
-    \textit{Inserire: matrice\_correlazione.png}\\
-    Heatmap della matrice di correlazione completa (strato 0--5\,cm)
-    \vspace{4cm}}}
+    \includegraphics[width=0.85\textwidth]{matrice_correlazione.png}
     \caption{Matrice di correlazione delle variabili pedologiche
     superficiali. I valori numerici sono annotati nella heatmap
     \texttt{coolwarm}.}
@@ -533,11 +507,7 @@ separatamente per ciascun gruppo tematico. In particolare:
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.7\textwidth]{corr_delta_macro.png}
-    \fbox{\parbox{0.65\textwidth}{\centering\vspace{3cm}
-    \textit{Inserire: corr\_delta\_macro.png}\\
-    Correlazione dei Delta Macro (Fondo -- Superficie)
-    \vspace{3cm}}}
+    \includegraphics[width=0.7\textwidth]{corr_delta_macro.png}
     \caption{Matrice di correlazione dei delta totali (fondo --
     superficie) per le 5 variabili principali.}
     \label{fig:corr_delta}
@@ -546,19 +516,15 @@ separatamente per ciascun gruppo tematico. In particolare:
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{corr_topsoil.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: corr\_topsoil.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{corr_topsoil.png}
+
         \caption{Transizioni superficiali (0--30\,cm).}
         \label{fig:corr_topsoil}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{corr_deep.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: corr\_deep.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{corr_deep.png}
+
         \caption{Dinamiche profonde (30--200\,cm).}
         \label{fig:corr_deep}
     \end{subfigure}
@@ -688,11 +654,7 @@ $\varepsilon = 1.8$.
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.65\textwidth]{knn_distance.png}
-    \fbox{\parbox{0.6\textwidth}{\centering\vspace{3cm}
-    \textit{Inserire: knn\_distance.png}\\
-    Grafico K-NN Distance per la ricerca di $\varepsilon$
-    \vspace{3cm}}}
+    \includegraphics[width=0.65\textwidth]{knn_distance.png}
     \caption{Grafico delle distanze K-NN per la determinazione
     dell'epsilon ottimale del DBSCAN.}
     \label{fig:knn}
@@ -706,7 +668,7 @@ in due sotto-cluster fino a raggiungere il numero desiderato di partizioni.
 
 A ogni iterazione, il cluster con la varianza interna maggiore viene
 selezionato e bipartito con un \kmeans{} a $K=2$. Il processo è stato
-configurato con $K=6$ per garantire un confronto equo con il \kmeans{}
+configurato con $K=5$ per garantire un confronto equo con il \kmeans{}
 standard.
 
 \subsection{Riduzione Dimensionale: PCA}
@@ -762,35 +724,30 @@ Tabella~\ref{tab:kottimale}.
         \toprule
         \textbf{Metodo} & \textbf{K suggerito} \\
         \midrule
-        Silhouette Standard & --- \\
-        Metodo del Gomito    & --- \\
-        GridSearchCV         & --- \\
-        Optuna               & --- \\
+        Silhouette Standard & 2 \\
+        Metodo del Gomito    & 5 \\
+        GridSearchCV         & 2 \\
+        Optuna               & 2 \\
         \midrule
         \textbf{K finale (voto)} & \textbf{5} \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-\textit{Nota: i valori specifici dei singoli metodi vanno compilati con
-i risultati dell'esecuzione.}
-
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{elbow_curve.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: elbow\_curve.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{elbow_curve.png}
+        % \includegraphics[width=\textwidth]{yb_elbow.png}
+
         \caption{Curva del gomito (Inerzia vs $K$).}
         \label{fig:elbow}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{silhouette_curve.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: silhouette\_curve.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{silhouette_curve.png}
+        % \includegraphics[width=\textwidth]{yb_silhouette.png}
+
         \caption{Coefficiente di Silhouette vs $K$.}
         \label{fig:sil_curve}
     \end{subfigure}
@@ -801,19 +758,15 @@ i risultati dell'esecuzione.}
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{optuna_history.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: optuna\_history.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{optuna_history.png}
+
         \caption{Storia dell'ottimizzazione Optuna.}
         \label{fig:optuna_hist}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{optuna_importance.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.5cm}
-        \textit{Inserire: optuna\_importance.png}
-        \vspace{2.5cm}}}
+        \includegraphics[width=\textwidth]{optuna_importance.png}
+
         \caption{Importanza degli iperparametri (Optuna).}
         \label{fig:optuna_imp}
     \end{subfigure}
@@ -827,30 +780,8 @@ La libreria Yellowbrick ha fornito tre visualizzazioni diagnostiche:
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.32\textwidth}
-        % \includegraphics[width=\textwidth]{yb_elbow.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
-        \textit{yb\_elbow.png}
-        \vspace{2.2cm}}}
-        \caption{K-Elbow.}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
-        % \includegraphics[width=\textwidth]{yb_silhouette.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
-        \textit{yb\_silhouette.png}
-        \vspace{2.2cm}}}
-        \caption{Profilo Silhouette.}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
-        % \includegraphics[width=\textwidth]{yb_intercluster.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{2.2cm}
-        \textit{yb\_intercluster.png}
-        \vspace{2.2cm}}}
-        \caption{Distanza inter-cluster.}
-    \end{subfigure}
-    \caption{Diagnostiche Yellowbrick per la validazione del clustering.}
+    \includegraphics[width=0.65\textwidth]{yb_intercluster.png}
+    \caption{Distanza inter-cluster (Yellowbrick) per la validazione del clustering.}
     \label{fig:yellowbrick}
 \end{figure}
 
@@ -861,11 +792,7 @@ delle prime due componenti principali.
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.75\textwidth]{pca_clusters.png}
-    \fbox{\parbox{0.7\textwidth}{\centering\vspace{4cm}
-    \textit{Inserire: pca\_clusters.png}\\
-    Scatter plot PCA colorato per cluster
-    \vspace{4cm}}}
+    \includegraphics[width=0.75\textwidth]{pca_clusters.png}
     \caption{Proiezione PCA 2D dei cluster \kmeans{}. Le percentuali
     sugli assi indicano la varianza spiegata da ciascuna componente.}
     \label{fig:pca}
@@ -880,11 +807,7 @@ geografica coerente con la geomorfologia della Capitanata
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{mappa_kmeans.png}
-    \fbox{\parbox{0.75\textwidth}{\centering\vspace{5cm}
-    \textit{Inserire: mappa\_kmeans.png}\\
-    Mappa spaziale dei cluster K-Means (K=5)
-    \vspace{5cm}}}
+    \includegraphics[width=0.8\textwidth]{mappa_kmeans.png}
     \caption{Mappatura spaziale dei cluster \kmeans{} con \kval{5}
     sulla regione Capitanata. La coerenza geografica dei cluster
     conferma la validità pedologica dell'analisi.}
@@ -894,20 +817,16 @@ geografica coerente con la geomorfologia della Capitanata
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{mappa_dbscan.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{3.5cm}
-        \textit{Inserire: mappa\_dbscan.png}
-        \vspace{3.5cm}}}
+        \includegraphics[width=\textwidth]{mappa_dbscan.png}
+
         \caption{DBSCAN ($\varepsilon=1.8$, \texttt{min\_samples}=30).}
         \label{fig:mappa_dbscan}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
-        % \includegraphics[width=\textwidth]{mappa_bisecting.png}
-        \fbox{\parbox{\textwidth}{\centering\vspace{3.5cm}
-        \textit{Inserire: mappa\_bisecting.png}
-        \vspace{3.5cm}}}
-        \caption{Bisecting \kmeans{} ($K=6$).}
+        \includegraphics[width=\textwidth]{mappa_bisecting.png}
+
+        \caption{Bisecting \kmeans{} ($K=5$).}
         \label{fig:mappa_bisecting}
     \end{subfigure}
     \caption{Confronto delle mappature spaziali per DBSCAN e Bisecting
@@ -923,11 +842,7 @@ interpretare il ``profilo agronomico'' di ciascun cluster
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.85\textwidth]{profili_cluster.png}
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{5cm}
-    \textit{Inserire: profili\_cluster.png}\\
-    Heatmap dei centroidi standardizzati (Z-score)
-    \vspace{5cm}}}
+    \includegraphics[width=0.85\textwidth]{profili_cluster.png}
     \caption{Profilo agronomico dei cluster basato sugli Z-score dei
     centroidi. Valori positivi (rossi) indicano gradienti superiori alla
     media regionale; valori negativi (blu) indicano gradienti inferiori.}
@@ -948,9 +863,9 @@ i tre algoritmi.
         \textbf{Algoritmo} & \textbf{Silhouette} ($\uparrow$) &
         \textbf{SSE / Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means ($K=5$)            & ---  & --- \\
-        Bisecting K-Means ($K=6$)  & ---  & --- \\
-        DBSCAN ($\varepsilon=1.8$) & ---  & N/A \\
+        K-Means ($K=5$)            & 0.171116  & 841862.407899 \\
+        Bisecting K-Means ($K=5$)  & 0.140330  & 823406.562218 \\
+        DBSCAN ($\varepsilon=1.8$) & -0.016263  & N/A \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -978,15 +893,11 @@ addestramento con un trade-off minimo in termini di inerzia.
         \textbf{Algoritmo} & \textbf{Tempo (s)} ($\downarrow$) &
         \textbf{Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means Standard     & --- & --- \\
-        Mini-Batch K-Means   & --- & --- \\
+        K-Means Standard     & 3.415 & 841864.30 \\
+        Mini-Batch K-Means   & 0.054 & 854788.85 \\
         \bottomrule
     \end{tabular}
 \end{table}
-
-\textit{Nota: i valori numerici vanno compilati con i risultati
-dell'esecuzione.}
-
 
 % ══════════════════════════════════════════════════════════════════════════
 \section{Discussione e Conclusioni}
@@ -1062,56 +973,5 @@ Possibili estensioni del lavoro includono:
     (autoencoders + clustering nello spazio latente) per catturare
     relazioni non lineari tra le feature.
 \end{itemize}
-
-
-% ══════════════════════════════════════════════════════════════════════════
-% BIBLIOGRAFIA
-% ══════════════════════════════════════════════════════════════════════════
-
-\begin{thebibliography}{99}
-
-\bibitem{soilgrids}
-Poggio, L., de Sousa, L.M., Batjes, N.H., et al. (2021).
-\textit{SoilGrids 2.0: producing soil information for the globe with
-quantified spatial uncertainty}.
-SOIL, 7, 217--240.
-
-\bibitem{macqueen}
-MacQueen, J. (1967).
-\textit{Some methods for classification and analysis of multivariate
-observations}.
-Proceedings of the 5th Berkeley Symposium on Mathematical Statistics and
-Probability, 1, 281--297.
-
-\bibitem{dbscan}
-Ester, M., Kriegel, H.-P., Sander, J., \& Xu, X. (1996).
-\textit{A density-based algorithm for discovering clusters in large
-spatial databases with noise}.
-Proceedings of KDD-96, 226--231.
-
-\bibitem{silhouette}
-Rousseeuw, P.J. (1987).
-\textit{Silhouettes: A graphical aid to the interpretation and
-validation of cluster analysis}.
-Journal of Computational and Applied Mathematics, 20, 53--65.
-
-\bibitem{optuna}
-Akiba, T., Sano, S., Yanase, T., Ohta, T., \& Koyama, M. (2019).
-\textit{Optuna: A Next-generation Hyperparameter Optimization
-Framework}.
-Proceedings of the 25th ACM SIGKDD, 2623--2631.
-
-\bibitem{sklearn}
-Pedregosa, F., Varoquaux, G., Gramfort, A., et al. (2011).
-\textit{Scikit-learn: Machine Learning in Python}.
-Journal of Machine Learning Research, 12, 2825--2830.
-
-\bibitem{bisecting}
-Steinbach, M., Karypis, G., \& Kumar, V. (2000).
-\textit{A comparison of document clustering techniques}.
-KDD Workshop on Text Mining.
-
-\end{thebibliography}
-
 
 \end{document}
