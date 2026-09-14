@@ -136,17 +136,19 @@ per la caratterizzazione pedologica dei suoli della regione Capitanata
 (Puglia, Italia), basato sull'analisi dei \textbf{gradienti verticali}
 delle proprietà chimico-fisiche del suolo.
 
-A partire dai dati geospaziali SoilGrids, sono state ingegnerizzate 15
+A partire dai dati geospaziali SoilGrids, sono state ingegnerizzate
 feature che descrivono le \emph{dinamiche verticali} del profilo
-pedologico: variazioni totali (delta) e tassi di variazione normalizzati
+pedologico: tassi di variazione normalizzati
 (gradienti) tra i sei strati di profondità standard (0--200\,cm).
 
-Tre algoritmi di clustering sono stati addestrati e confrontati:
+Quattro algoritmi di clustering sono stati addestrati e confrontati:
 \textbf{\kmeans{}} (con ricerca iperparametri tramite Optuna,
-GridSearchCV e Metodo del Gomito), \textbf{DBSCAN} e \textbf{Bisecting
-\kmeans{}}. La validazione è stata condotta mediante Coefficiente di
-Silhouette e Sum of Squared Error (SSE). Un confronto di efficienza tra
-\kmeans{} standard e Mini-Batch \kmeans{} completa l'analisi.
+GridSearchCV e Metodo del Gomito), \textbf{DBSCAN}, \textbf{Bisecting
+\kmeans{}} e \textbf{Gaussian Mixture Model (GMM)}, quest'ultimo basato
+sull'algoritmo Expectation-Maximization (EM) che generalizza il \kmeans{}
+in ambito probabilistico. La validazione è stata condotta mediante
+Coefficiente di Silhouette e Sum of Squared Error (SSE). Un confronto di
+efficienza tra \kmeans{} standard e Mini-Batch \kmeans{} completa l'analisi.
 
 I risultati mostrano che il \kmeans{} con \kval{5} produce la migliore
 separazione spaziale e agronomica dei cluster, identificando tipologie
@@ -187,8 +189,9 @@ L'obiettivo di questo progetto è applicare tecniche di
     utilizzare etichette predefinite.
 
     \item \textbf{Confrontare algoritmi di clustering} di diversa
-    natura: partizionale (\kmeans{}), basato sulla densità (DBSCAN)
-    e gerarchico divisivo (Bisecting \kmeans{}).
+    natura: partizionale (\kmeans{}), basato sulla densità (DBSCAN),
+    gerarchico divisivo (Bisecting \kmeans{}) e probabilistico
+    (Gaussian Mixture Model con algoritmo EM).
 
     \item \textbf{Validare la coerenza spaziale} dei risultati,
     verificando che i cluster individuati nello spazio delle feature
@@ -238,6 +241,7 @@ Tabella~\ref{tab:variabili}.
         \texttt{wv0033}    & Contenuto idrico a 33\,kPa (CC) & cm$^3$/cm$^3$ \\
         \texttt{wv1500}    & Contenuto idrico a 1500\,kPa (PA) & cm$^3$/cm$^3$ \\
         \texttt{ocs}       & Stock di carbonio organico      & t/ha \\
+        \texttt{Ksat}      & Conduttività idraulica saturata (derivata) & cm/giorno \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -450,12 +454,16 @@ centri) non sarebbe comparabile con quello tra 0--5\,cm e 5--15\,cm
 
 \subsection{Selezione delle 15 Feature Finali}
 
-Dopo il calcolo, sono state selezionate \textbf{15 feature} suddivise
-in tre gruppi tematici (Tabella~\ref{tab:feature}):
+Dopo il calcolo, sono state selezionate le feature suddivise
+in gruppi tematici (Tabella~\ref{tab:feature}). Oltre alle variabili
+pedologiche classiche, è stata inclusa la \textbf{conduttività idraulica
+saturata} (\texttt{Ksat}), già presente nel dataset NetCDF in quanto
+derivata mediante funzioni di pedotrasferimento a partire dalle
+variabili tessiturali e idrologiche.
 
 \begin{table}[H]
     \centering
-    \caption{Le 15 feature selezionate per il clustering, raggruppate
+    \caption{Feature selezionate per il clustering, raggruppate
     per tipologia.}
     \label{tab:feature}
     \small
@@ -463,26 +471,30 @@ in tre gruppi tematici (Tabella~\ref{tab:feature}):
         \toprule
         \textbf{Gruppo} & \textbf{Feature} & \textbf{Interpretazione} \\
         \midrule
-        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Delta Macro}}}
-        & \texttt{clay\_delta\_total}   & Accumulo/depauperamento argilla \\
-        & \texttt{soc\_delta\_total}    & Perdita carbonio organico \\
-        & \texttt{phh2o\_delta\_total}  & Variazione acidità \\
-        & \texttt{cec\_delta\_total}    & Variazione reattività chimica \\
-        & \texttt{bdod\_delta\_total}   & Variazione compattazione \\
+        \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{Argilla}}}
+        & \texttt{clay\_grad\_0-5\_to\_5-15}     & Dinamica tessiturale superficiale \\
+        & \texttt{clay\_grad\_5-15\_to\_15-30}    & Inizio lisciviazione argilla \\
+        & \texttt{clay\_grad\_15-30\_to\_30-60}   & Orizzonte argillico (Bt) \\
         \midrule
-        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Topsoil}}}
-        & \texttt{soc\_grad\_0-5\_to\_5-15}     & Crollo iniziale sost. organica \\
-        & \texttt{soc\_grad\_5-15\_to\_15-30}    & Esaurimento zona radicale \\
-        & \texttt{clay\_grad\_5-15\_to\_15-30}   & Inizio lisciviazione argilla \\
-        & \texttt{bdod\_grad\_5-15\_to\_15-30}   & Inizio compattazione \\
-        & \texttt{phh2o\_grad\_5-15\_to\_15-30}  & Primi cambiamenti pH \\
+        \multirow{1}{*}{\textbf{Sabbia}}
+        & \texttt{sand\_grad\_30-60\_to\_60-100}  & Discontinuità sedimentarie \\
         \midrule
-        \multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Profondo}}}
-        & \texttt{clay\_grad\_15-30\_to\_30-60}  & Orizzonte argillico (Bt) \\
-        & \texttt{bdod\_grad\_15-30\_to\_30-60}  & Suola di lavorazione \\
-        & \texttt{cec\_grad\_15-30\_to\_30-60}   & Attività chimica zona accumulo \\
-        & \texttt{clay\_grad\_30-60\_to\_60-100} & Transizione substrato inerte \\
-        & \texttt{cec\_grad\_60-100\_to\_100-200} & Cambiamento chimico profondo \\
+        \multirow{2}{*}{\rotatebox[origin=c]{90}{\textbf{Scheletro}}}
+        & \texttt{cfvo\_grad\_15-30\_to\_30-60}   & Transizioni litologiche \\
+        & \texttt{cfvo\_grad\_60-100\_to\_100-200} & Contatto con roccia madre \\
+        \midrule
+        \multirow{2}{*}{\rotatebox[origin=c]{90}{\textbf{SOC}}}
+        & \texttt{soc\_grad\_0-5\_to\_5-15}      & Crollo iniziale sost.\ organica \\
+        & \texttt{soc\_grad\_5-15\_to\_15-30}     & Esaurimento zona radicale \\
+        \midrule
+        \multirow{3}{*}{\rotatebox[origin=c]{90}{\textbf{BDOD}}}
+        & \texttt{bdod\_grad\_5-15\_to\_15-30}    & Suola di aratura \\
+        & \texttt{bdod\_grad\_15-30\_to\_30-60}   & Compattazione profonda \\
+        & \texttt{bdod\_grad\_30-60\_to\_60-100}  & Transizione substrato \\
+        \midrule
+        \multirow{2}{*}{\rotatebox[origin=c]{90}{\textbf{Ksat}}}
+        & \texttt{Ksat\_grad\_0-5\_to\_5-15}      & Variazione drenaggio superficiale \\
+        & \texttt{Ksat\_grad\_15-30\_to\_30-60}   & Variazione drenaggio profondo \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -646,11 +658,11 @@ Due sono i parametri chiave:
 
 La determinazione di $\varepsilon$ è stata effettuata tramite il
 \textbf{grafico K-NN distance}: calcolando la distanza dal
-$k$-esimo vicino più prossimo (con $k =$ \texttt{min\_samples} $= 30$)
+$k$-esimo vicino più prossimo (con $k =$ \texttt{min\_samples} $= 26$)
 e ordinando i valori in modo crescente, si individua il punto di
 ginocchio che segna il passaggio da ``densità intra-cluster'' a
 ``distanza inter-cluster''. Il valore scelto è stato
-$\varepsilon = 1.8$.
+$\varepsilon = 1.9$.
 
 \begin{figure}[H]
     \centering
@@ -670,6 +682,84 @@ A ogni iterazione, il cluster con la varianza interna maggiore viene
 selezionato e bipartito con un \kmeans{} a $K=2$. Il processo è stato
 configurato con $K=5$ per garantire un confronto equo con il \kmeans{}
 standard.
+
+\subsection{Algoritmo 4: Gaussian Mixture Model (EM)}
+\label{subsec:gmm}
+
+Il \textbf{Gaussian Mixture Model} (GMM) generalizza il \kmeans{} in
+ambito probabilistico, modellando i dati come una miscela di $K$
+distribuzioni gaussiane multivariate:
+
+\begin{equation}
+    p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k \;\mathcal{N}(\mathbf{x}
+    \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
+    \label{eq:gmm}
+\end{equation}
+
+dove $\pi_k$ sono i pesi di miscelazione ($\sum_k \pi_k = 1$),
+$\boldsymbol{\mu}_k$ e $\boldsymbol{\Sigma}_k$ sono la media e la
+matrice di covarianza della $k$-esima componente gaussiana.
+
+I parametri vengono stimati mediante l'algoritmo iterativo
+\textbf{Expectation-Maximization (EM)}:
+
+\begin{enumerate}
+    \item \textbf{E-step (Expectation)}: per ogni campione $\mathbf{x}_i$,
+    si calcola la \emph{responsabilità} $\gamma_{ik}$, ovvero la
+    probabilità a posteriori che $\mathbf{x}_i$ appartenga alla componente
+    $k$:
+    \begin{equation}
+        \gamma_{ik} = \frac{\pi_k \;\mathcal{N}(\mathbf{x}_i \mid
+        \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}
+        {\sum_{j=1}^{K} \pi_j \;\mathcal{N}(\mathbf{x}_i \mid
+        \boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}
+    \end{equation}
+
+    \item \textbf{M-step (Maximization)}: si aggiornano i parametri di
+    ogni componente usando le responsabilità come pesi:
+    \begin{align}
+        \boldsymbol{\mu}_k^{\text{new}} &= \frac{\sum_i \gamma_{ik}
+        \mathbf{x}_i}{\sum_i \gamma_{ik}} \\
+        \boldsymbol{\Sigma}_k^{\text{new}} &= \frac{\sum_i \gamma_{ik}
+        (\mathbf{x}_i - \boldsymbol{\mu}_k^{\text{new}})
+        (\mathbf{x}_i - \boldsymbol{\mu}_k^{\text{new}})^\top}
+        {\sum_i \gamma_{ik}} \\
+        \pi_k^{\text{new}} &= \frac{1}{n} \sum_i \gamma_{ik}
+    \end{align}
+\end{enumerate}
+
+L'iterazione prosegue fino a convergenza della log-verosimiglianza.
+Rispetto al \kmeans{}, il GMM offre due vantaggi fondamentali:
+
+\begin{itemize}
+    \item \textbf{Assegnazione probabilistica} (\emph{soft clustering}):
+    ogni pixel riceve una probabilità di appartenenza a ciascun cluster,
+    piuttosto che un'assegnazione deterministica. Questo è
+    particolarmente utile in pedologia, dove le transizioni tra tipi di
+    suolo sono graduali.
+
+    \item \textbf{Cluster ellissoidali}: la matrice di covarianza
+    completa consente di modellare cluster non sferici, catturando
+    correlazioni tra le feature.
+\end{itemize}
+
+Per la selezione del numero ottimale di componenti, sono stati utilizzati
+il \textbf{Bayesian Information Criterion (BIC)} e l'\textbf{Akaike
+Information Criterion (AIC)}:
+
+\begin{align}
+    \text{BIC} &= -2 \ln \hat{L} + p \ln n \\
+    \text{AIC} &= -2 \ln \hat{L} + 2p
+\end{align}
+
+dove $\hat{L}$ è la verosimiglianza massimizzata, $p$ il numero di
+parametri liberi e $n$ la dimensione del campione. Entrambi i criteri
+penalizzano la complessità del modello, ma il BIC impone una penalità
+più severa, tendendo a preferire modelli più parsimoniosi.
+
+Il modello finale è stato configurato con \texttt{covariance\_type='full'}
+(matrice di covarianza completa per ogni componente) e $K=5$ per
+consentire un confronto equo con gli altri algoritmi.
 
 \subsection{Riduzione Dimensionale: PCA}
 
@@ -700,10 +790,22 @@ dove $a(i)$ è la distanza media intra-cluster e $b(i)$ è la distanza
 media al cluster più vicino. Il valore medio $\bar{s} \in [-1, 1]$:
 valori prossimi a 1 indicano cluster ben separati.
 
+\textbf{Nota metodologica:} per il DBSCAN, il Coefficiente di Silhouette
+è stato calcolato \emph{escludendo} i punti classificati come rumore
+(etichetta $-1$). Includere tali punti penalizzerebbe artificialmente
+l'algoritmo, poiché i punti di rumore non appartengono ad alcun cluster e
+generano valori di silhouette fortemente negativi, distorcendo la media
+complessiva.
+
 \paragraph{Sum of Squared Error (SSE / Inerzia).} Definita
 nell'Eq.~\eqref{eq:sse}, misura la coesione interna dei cluster. Un
 valore più basso indica cluster più compatti. Questa metrica non è
-applicabile al DBSCAN.
+applicabile al DBSCAN né al GMM (che ottimizza la verosimiglianza
+anziché l'SSE).
+
+\paragraph{BIC e AIC.} Per il GMM, la selezione del modello è stata
+guidata dal BIC e dall'AIC (cfr.\ Sezione~\ref{subsec:gmm}), che bilanciano
+bontà del fit e complessità.
 
 
 % ══════════════════════════════════════════════════════════════════════════
@@ -819,7 +921,7 @@ geografica coerente con la geomorfologia della Capitanata
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{mappa_dbscan.png}
 
-        \caption{DBSCAN ($\varepsilon=1.8$, \texttt{min\_samples}=30).}
+        \caption{DBSCAN ($\varepsilon=1.9$, \texttt{min\_samples}=26).}
         \label{fig:mappa_dbscan}
     \end{subfigure}
     \hfill
@@ -832,6 +934,41 @@ geografica coerente con la geomorfologia della Capitanata
     \caption{Confronto delle mappature spaziali per DBSCAN e Bisecting
     \kmeans{}.}
     \label{fig:mappe_alt}
+\end{figure}
+
+\subsection{Risultati del GMM (Expectation-Maximization)}
+
+\subsubsection{Selezione del Modello: BIC e AIC}
+
+La Figura~\ref{fig:bic_aic} mostra l'andamento di BIC e AIC al variare
+del numero di componenti gaussiane. Entrambi i criteri decrescono
+all'aumentare di $K$, con un rallentamento della discesa intorno a
+$K=5$, confermando la scelta del modello a 5 componenti.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{bic_aic_gmm.png}
+    \caption{Curve BIC e AIC per il GMM al variare del numero di
+    componenti. La linea tratteggiata rossa indica $K=5$.}
+    \label{fig:bic_aic}
+\end{figure}
+
+\subsubsection{Mappatura Spaziale GMM}
+
+La Figura~\ref{fig:mappa_gmm} mostra la mappatura dei cluster GMM.
+Rispetto al \kmeans{}, il GMM tende a produrre confini inter-cluster più
+sfumati, coerentemente con la natura probabilistica dell'assegnazione.
+L'analisi dell'incertezza ha evidenziato la percentuale di pixel con
+probabilità di assegnazione inferiore al 70\%, corrispondenti alle zone
+di transizione pedologica.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{mappa_gmm.png}
+    \caption{Mappatura spaziale dei cluster GMM con \kval{5}.
+    L'assegnazione è basata sulla componente gaussiana con
+    probabilità a posteriori massima (\emph{hard assignment}).}
+    \label{fig:mappa_gmm}
 \end{figure}
 
 \subsection{Profilazione dei Cluster}
@@ -852,26 +989,30 @@ interpretare il ``profilo agronomico'' di ciascun cluster
 \subsection{Validazione e Confronto dei Modelli}
 
 La Tabella~\ref{tab:validazione} riporta il confronto quantitativo tra
-i tre algoritmi.
+i quattro algoritmi. Si noti che per il DBSCAN il Coefficiente di
+Silhouette è stato calcolato escludendo i punti di rumore
+(cfr.\ Sezione~\ref{sec:metodologia}).
 
 \begin{table}[H]
     \centering
-    \caption{Confronto delle metriche di validazione interna.}
+    \caption{Confronto delle metriche di validazione interna ($N = 89\,786$ pixel validi).}
     \label{tab:validazione}
     \begin{tabular}{@{}lcc@{}}
         \toprule
         \textbf{Algoritmo} & \textbf{Silhouette} ($\uparrow$) &
         \textbf{SSE / Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means ($K=5$)            & 0.171116  & 841862.407899 \\
-        Bisecting K-Means ($K=5$)  & 0.140330  & 823406.562218 \\
-        DBSCAN ($\varepsilon=1.8$) & -0.016263  & N/A \\
+        K-Means ($K=5$)            & 0.1050  & 797\,772.04 \\
+        Bisecting K-Means ($K=5$)  & 0.0888  & 818\,668.38 \\
+        DBSCAN ($\varepsilon=1.9$) & 0.0869$^*$  & N/A \\
+        GMM / EM ($K=5$)           & 0.0692  & N/A$^\dagger$ \\
         \bottomrule
     \end{tabular}
-\end{table}
 
-\textit{Nota: i valori numerici vanno compilati con i risultati
-dell'esecuzione.}
+    \vspace{4pt}
+    {\footnotesize $^*$Calcolato escludendo i 5\,570 pixel (6.20\%) classificati come rumore ($-1$).}\\
+    {\footnotesize $^\dagger$Il GMM ottimizza la log-verosimiglianza (BIC = 2\,792\,738, AIC = 2\,787\,810), non l'SSE.}
+\end{table}
 
 \subsection{Efficienza Computazionale: K-Means vs Mini-Batch K-Means}
 
@@ -886,15 +1027,15 @@ addestramento con un trade-off minimo in termini di inerzia.
 
 \begin{table}[H]
     \centering
-    \caption{Confronto efficienza su $\sim$94\,000 pixel.}
+    \caption{Confronto efficienza su 89\,786 pixel validi della Capitanata.}
     \label{tab:efficienza}
     \begin{tabular}{@{}lcc@{}}
         \toprule
         \textbf{Algoritmo} & \textbf{Tempo (s)} ($\downarrow$) &
         \textbf{Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means Standard     & 3.415 & 841864.30 \\
-        Mini-Batch K-Means   & 0.054 & 854788.85 \\
+        K-Means Standard     & 0.472 & 797\,772.53 \\
+        Mini-Batch K-Means   & 0.136 & 814\,878.06 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -912,7 +1053,7 @@ catturando informazioni sulla struttura tridimensionale del profilo
 pedologico. I principali risultati sono:
 
 \begin{enumerate}
-    \item La \textbf{feature engineering} basata su delta totali e
+    \item La \textbf{feature engineering} basata su
     gradienti normalizzati si è dimostrata efficace nel catturare le
     dinamiche verticali del suolo, producendo cluster con
     interpretazione agronomica chiara.
@@ -931,6 +1072,14 @@ pedologico. I principali risultati sono:
     comparabili al \kmeans{} standard, con una lieve differenza nella
     gerarchia di suddivisione che potrebbe essere sfruttata per analisi
     a risoluzione variabile.
+
+    \item Il \textbf{GMM} (algoritmo EM) ha offerto un'assegnazione
+    probabilistica dei pixel ai cluster, evidenziando le zone di
+    transizione pedologica con incertezza elevata. La selezione del
+    modello tramite BIC e AIC ha confermato la ragionevolezza della
+    scelta $K=5$. I cluster GMM mostrano una struttura spaziale
+    comparabile a quella del \kmeans{}, con confini leggermente più
+    sfumati dovuti alla natura ellissoidale delle componenti gaussiane.
 
     \item Il \textbf{Mini-Batch \kmeans{}} ha confermato la scalabilità
     dell'approccio a dataset geospaziali di grandi dimensioni, con
