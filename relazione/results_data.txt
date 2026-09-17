@@ -1,0 +1,24 @@
+=== RISULTATI NUMERICI PER LA RELAZIONE ===
+
+Pixel ML: 89,786
+Feature: 13
+K finale: 6
+
+Gomito: 6, Sil: 2, DB: 11, CH: 2
+
+Sil K-Means: 0.1041
+Sil Bisecting: 0.0739
+Sil DBSCAN: 0.0869
+Sil GMM: 0.0658
+SSE K-Means: 762167.37
+SSE Bisecting: 793840.54
+DBSCAN rumore: 5570 (6.20%)
+GMM BIC: 2781078.65
+GMM AIC: 2775162.79
+GMM incerti: 13773 (15.3%)
+ARI K-Means vs Bisecting: 0.4579
+ARI K-Means vs GMM: 0.3872
+NMI K-Means vs GMM: 0.4623
+K-Means tempo: 0.437s, SSE: 762167.37
+Mini-Batch tempo: 0.141s, SSE: 780138.45
+PCA PC1: 24.4%, PC2: 14.5%

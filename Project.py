@@ -24,8 +24,8 @@ from google.colab import drive
 drive.mount('/content/drive')
 
 # Carica il dataset NetCDF
-ds = xr.load_dataset('/content/drive/MyDrive/COLAB_MLDM/soilgrids_italy/data/soil_matrices_3d_with_means.nc')
-# ds = xr.load_dataset('/content/drive/MyDrive/data/soil_matrices_3d_with_means.nc')
+#ds = xr.load_dataset('/content/drive/MyDrive/COLAB_MLDM/soilgrids_italy/data/soil_matrices_3d_with_means.nc')
+ds = xr.load_dataset('/content/drive/MyDrive/data/soil_matrices_3d_with_means.nc')
 
 print(f"\n\nData variables: {len(ds.data_vars)}")
 print(list(ds.data_vars))
@@ -47,8 +47,8 @@ import xarray as xr
 import rioxarray
 
 # Percorso base della cartella dati
-base_dir = '/content/drive/MyDrive/COLAB_MLDM/soilgrids_italy/data'
-# base_dir = '/content/drive/MyDrive/data'
+#base_dir = '/content/drive/MyDrive/COLAB_MLDM/soilgrids_italy/data'
+base_dir = '/content/drive/MyDrive/data'
 nc_path = os.path.join(base_dir, 'soil_matrices_3d_with_means.nc')
 
 print("--- 1. CARICAMENTO DATASET E GESTIONE SCALING ---")
@@ -219,84 +219,6 @@ plt.show()
 ###2. **Gradienti Normalizzati:** Tasso di variazione tra strati consecutivi diviso per la distanza (in cm) tra i centri dei layer, per normalizzare spessori diversi.
 """
 
-"""
-print("--- FASE 2: FEATURE ENGINEERING (Calcolo Gradienti Normalizzati) ---")
-
-# 1. Profondità di riferimento (in cm) per il centro di ciascuno strato
-layer_midpoints = {
-    '0-5cm': 2.5,
-    '5-15cm': 10.0,
-    '15-30cm': 22.5,
-    '30-60cm': 45.0,
-    '60-100cm': 80.0,
-    '100-200cm': 150.0
-}
-depth_order = list(layer_midpoints.keys())
-
-# Variabili su cui calcolare i gradienti
-var_to_gradient = ['clay', 'sand', 'soc', 'phh2o', 'cec', 'bdod']
-gradient_features = {}
-
-for var in var_to_gradient:
-    if var in ds_scaled: # Controllo se la variabile esiste nel dataset
-        da_var = ds_scaled[var]
-
-        # A) Delta Totale (Fondo - Superficie) senza normalizzazione
-        delta_tot = da_var.sel(depth='100-200cm') - da_var.sel(depth='0-5cm')
-        gradient_features[f"{var}_delta_total"] = delta_tot
-
-        # B) Gradienti consecutivi normalizzati (Tasso di variazione per cm)
-        for i in range(len(depth_order) - 1):
-            d_curr = depth_order[i]
-            d_next = depth_order[i + 1]
-            dist_cm = layer_midpoints[d_next] - layer_midpoints[d_curr]
-
-            # Calcolo: (Valore Sotto - Valore Sopra) / Distanza in cm tra i centri
-            grad_step = (da_var.sel(depth=d_next) - da_var.sel(depth=d_curr)) / dist_cm
-            gradient_features[f"{var}_grad_{d_curr}_to_{d_next}"] = grad_step
-
-topsoil_vars = ['clay', 'soc', 'phh2o', 'cec', 'bdod']
-for var in topsoil_vars:
-    gradient_features[f"{var}_0-5cm"] = ds_scaled[var].sel(depth='0-5cm')
-
-# 2. Creazione del Dataset NetCDF con tutte le feature
-ds_gradients = xr.Dataset(gradient_features)
-
-# 3. Convertiamo in DataFrame Pandas e rimuoviamo i NaN in un colpo solo
-df_ml = ds_gradients.to_dataframe().dropna().reset_index()
-
-print("--- SELEZIONE DELLE 15 FEATURE UFFICIALI ---")
-
-# Definiamo la lista ufficiale di 15 feature (solo gradienti e delta)
-selected_ml_cols = [
-    # 1. Delta Macro (Fondo - Superficie)
-    'clay_delta_total',
-    'soc_delta_total',
-    'phh2o_delta_total',
-    'cec_delta_total',
-    'bdod_delta_total',
-
-    # 2. Gradienti Topsoil/Subsoil (0 - 30 cm)
-    'soc_grad_0-5cm_to_5-15cm',      # Crollo iniziale della sostanza organica
-    'soc_grad_5-15cm_to_15-30cm',    # Esaurimento del carbonio nella zona radicale
-    'clay_grad_5-15cm_to_15-30cm',   # Inizio della lisciviazione dell'argilla
-    'bdod_grad_5-15cm_to_15-30cm',   # Variazione di densità (inizio compattazione)
-    'phh2o_grad_5-15cm_to_15-30cm',  # Primi cambiamenti di pH
-
-    # 3. Gradienti Profondi (30 - 200 cm)
-    'clay_grad_15-30cm_to_30-60cm',  # Formazione orizzonte argillico (accumulo)
-    'bdod_grad_15-30cm_to_30-60cm',  # Identificazione suola di lavorazione (Hardpan)
-    'cec_grad_15-30cm_to_30-60cm',   # Attività chimica nella zona di accumulo
-    'clay_grad_30-60cm_to_60-100cm', # Transizione verso il substrato inerte
-    'cec_grad_60-100cm_to_100-200cm' # Cambiamento chimico profondo (roccia madre)
-]
-
-# Sovrascriviamo X_raw affinché l'algoritmo usi SOLO queste 15 feature
-X_raw = df_ml[selected_ml_cols].values
-
-print(f"Feature selezionate per il clustering: {len(selected_ml_cols)}")
-"""
-
 import numpy as np
 import xarray as xr
 
@@ -360,34 +282,11 @@ print(f"Feature generate con successo: {len(selected_ml_cols)}")
 ### Verifichiamo la validità agronomica dei gradienti creati. Ci aspettiamo, ad esempio, una forte correlazione negativa tra la dinamica dell'argilla e quella della sabbia (all'aumentare dell'una lungo il profilo, l'altra cala).
 """
 
-"""
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-print("--- ANALISI CORRELAZIONE DEI GRADIENTI MACRO ---")
-
-print("--- 1. CORRELAZIONE DELLE MACRO-DINAMICHE (DELTA TOTALI) ---")
-
-delta_macro_cols = [
-    'clay_delta_total', 'soc_delta_total',
-    'phh2o_delta_total', 'cec_delta_total', 'bdod_delta_total'
-]
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(
-    df_ml[delta_macro_cols].corr(),
-    annot=True, cmap='coolwarm', fmt='.2f', vmin=-1, vmax=1, linewidths=0.5
-)
-plt.title('Correlazione: Delta Macro (Fondo - Superficie)', fontsize=14, pad=15)
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-print("--- ANALISI CORRELAZIONE COMPLETA DEI GRADIENTI VERTICALI (15 FEATURE) ---")
+print("--- ANALISI CORRELAZIONE COMPLETA DEI GRADIENTI VERTICALI (13 FEATURE) ---")
 
 # Calcolo matrice di correlazione di Pearson (o Spearman se ci sono code lunghe)
 corr_matrix = df_ml[selected_ml_cols].corr(method='pearson')
@@ -428,210 +327,14 @@ if high_corr_pairs:
 else:
     print("\nNessuna coppia supera la soglia critica |r| > 0.8: lo spazio delle feature è ben bilanciato.")
 
-"""print("--- 2. CORRELAZIONE DELLE TRANSIZIONI SUPERFICIALI E RADICALI ---")
-
-topsoil_grad_cols = [
-    'soc_grad_0-5cm_to_5-15cm', 'soc_grad_5-15cm_to_15-30cm',
-    'clay_grad_5-15cm_to_15-30cm', 'bdod_grad_5-15cm_to_15-30cm',
-    'phh2o_grad_5-15cm_to_15-30cm'
-]
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(
-    df_ml[topsoil_grad_cols].corr(),
-    annot=True, cmap='coolwarm', fmt='.2f', vmin=-1, vmax=1, linewidths=0.5
-)
-plt.title('Correlazione: Transizioni Radicali (0 - 30 cm)', fontsize=14, pad=15)
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-
-print("--- 3. CORRELAZIONE DELLE DINAMICHE PROFONDE ---")
-
-deep_grad_cols = [
-    'clay_grad_15-30cm_to_30-60cm', 'bdod_grad_15-30cm_to_30-60cm',
-    'cec_grad_15-30cm_to_30-60cm', 'clay_grad_30-60cm_to_60-100cm',
-    'cec_grad_60-100cm_to_100-200cm'
-]
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(
-    df_ml[deep_grad_cols].corr(),
-    annot=True, cmap='coolwarm', fmt='.2f', vmin=-1, vmax=1, linewidths=0.5
-)
-plt.title('Correlazione: Dinamiche Profonde (30 - 200 cm)', fontsize=14, pad=15)
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-
-#**FASE 3: Preparazione Dati e Ricerca Iperparametri**
+"""#**FASE 3: Preparazione Dati e Ricerca Iperparametri**
 ### Le 15 nuove feature hanno scale e deviazioni standard diverse; applichiamo uno `StandardScaler` per evitare distorsioni nel calcolo delle distanze euclidee.
-### Successivamente, ricerchiamo il $K$ ottimale per il K-Means tramite Optuna, GridSearch e Metodo del Gomito su un campione di pixel.
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-from sklearn.model_selection import GridSearchCV
-from collections import Counter
-
-print("--- PREPARAZIONE DEL DATASET E STANDARDIZZAZIONE ---")
-
-# 1. DEFINIZIONE DI X_raw: Selezioniamo SOLO le feature ingegnerizzate (i gradienti)
-X_raw = df_ml[selected_ml_cols].values
-
-# 2. STANDARDIZZAZIONE DEI DATI
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_raw)
-
-print(f"Shape X_raw: {X_raw.shape}")
-print(f"Shape X_scaled: {X_scaled.shape}")
-
-# Calcolare la silhouette su troppi pixel satura la RAM. Usiamo un campione statistico per i test.
-MAX_SAMPLES = 15000
-if X_scaled.shape[0] > MAX_SAMPLES:
-    np.random.seed(42)
-    idx = np.random.choice(X_scaled.shape[0], MAX_SAMPLES, replace=False)
-    X_search = X_scaled[idx]
-    print(f"--> Dataset campionato a {MAX_SAMPLES} campioni per velocizzare Optuna e GridSearch.")
-else:
-    X_search = X_scaled
-
-# --- OPTUNA OPTIMIZATION ---
-try:
-    import optuna
-except ImportError:
-    import sys
-    import subprocess
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'optuna'])
-    import optuna
-
-optuna.logging.set_verbosity(optuna.logging.WARNING)
-
-def objective(trial):
-    n_clusters = trial.suggest_int('n_clusters', 2, 12)
-    n_init = trial.suggest_categorical('n_init', [10, 20])
-    max_iter = trial.suggest_int('max_iter', 200, 500, step=100)
-    init = trial.suggest_categorical('init', ['k-means++', 'random'])
-
-    model = KMeans(n_clusters=n_clusters, n_init=n_init, max_iter=max_iter, init=init, random_state=42)
-    labels = model.fit_predict(X_search)
-
-    if len(np.unique(labels)) < 2:
-        return -1
-    return silhouette_score(X_search, labels)
-
-study = optuna.create_study(direction='maximize')
-print("\nAvvio ottimizzazione con Optuna...")
-study.optimize(objective, n_trials=20)
-
-print('Best trial from Optuna:', study.best_trial.params)
-print(f'Best silhouette score from Optuna: {study.best_value:.4f}')
-
-# --- GRID SEARCH ---
-param_grid = {
-    'n_clusters': list(range(2, 13)),
-    'n_init': [10, 20],
-    'max_iter': [300]
-}
-
-# Corretto lo scorer: usiamo direttamente i labels pre-calcolati dal fit di GridSearchCV
-def silhouette_scorer(estimator, X, y=None):
-    labels = estimator.labels_
-    if len(np.unique(labels)) < 2:
-        return -1
-    return silhouette_score(X, labels)
-
-cv_single_split = [(np.arange(len(X_search)), np.arange(len(X_search)))]
-grid_search = GridSearchCV(
-    estimator=KMeans(random_state=42, init='k-means++'),
-    param_grid=param_grid,
-    scoring=silhouette_scorer,
-    cv=cv_single_split,
-    n_jobs=-1
-)
-
-print("\nAvvio GridSearchCV...")
-grid_search.fit(X_search)
-
-print('Best params from GridSearchCV:', grid_search.best_params_)
-
-# --- METODO DEL GOMITO E SILHOUETTE CLASSICO ---
-k_values = list(range(2, 13))
-silhouette_scores = []
-inertia_values = []
-
-print("\nCalcolo curve Silhouette e Gomito...")
-for k in k_values:
-    model = KMeans(n_clusters=k, random_state=42, n_init=10)
-    labels = model.fit_predict(X_search)
-    silhouette_scores.append(silhouette_score(X_search, labels))
-    inertia_values.append(model.inertia_)
-
-# Calcolo matematico del punto di gomito (Distanza massima)
-x_values = np.array(k_values, dtype=float)
-inertia_array = np.array(inertia_values, dtype=float)
-start_point = np.array([x_values[0], inertia_array[0]])
-end_point = np.array([x_values[-1], inertia_array[-1]])
-segment = end_point - start_point
-segment_norm = np.linalg.norm(segment)
-
-distances = []
-for x_value, inertia_value in zip(x_values, inertia_array):
-    point = np.array([x_value, inertia_value])
-    vector = point - start_point
-    dist = abs(segment[0] * vector[1] - segment[1] * vector[0]) / segment_norm if segment_norm != 0 else 0.0
-    distances.append(dist)
-
-best_k_silhouette = k_values[int(np.argmax(silhouette_scores))]
-best_k_elbow = k_values[int(np.argmax(distances))]
-best_k_optuna = int(study.best_trial.params['n_clusters'])
-best_k_grid = int(grid_search.best_params_['n_clusters'])
-
-# --- SISTEMA DI VOTO E ADDESTRAMENTO FINALE ---
-k_summary = pd.DataFrame({
-    'Metodo': ['Silhouette Standard', 'Metodo del Gomito', 'GridSearchCV', 'Optuna'],
-    'K suggerito': [best_k_silhouette, best_k_elbow, best_k_grid, best_k_optuna]
-})
-print('\nRiepilogo dei K suggeriti:')
-print(k_summary.to_string(index=False))
-
-votes = [best_k_silhouette, best_k_elbow, best_k_grid, best_k_optuna]
-vote_counts = Counter(votes)
-most_common_count = max(vote_counts.values())
-candidates = [k for k, count in vote_counts.items() if count == most_common_count]
-
-k_final = candidates[0] if len(candidates) == 1 else int(round(np.median(candidates)))
-print(f'\n>>> K FINALE SCELTO PER IL TUNING: {k_final} <<<')
-
-# ADDESTRAMENTO FINALE SULL'INTERO DATASET (X_scaled completo)
-print("\nEsecuzione del modello finale sull'intero dataset...")
-final_model = KMeans(
-    n_clusters=k_final,
-    init=study.best_trial.params.get('init', 'k-means++'),
-    n_init=int(study.best_trial.params.get('n_init', 20)),
-    max_iter=int(study.best_trial.params.get('max_iter', 300)),
-    random_state=42
-)
-
-# 3. SALVATAGGIO DEI CLUSTER E PREPARAZIONE PER LA MAPPA
-final_labels = final_model.fit_predict(X_scaled)
-df_ml['cluster'] = final_labels
-
-print(f'Inerzia finale: {final_model.inertia_:.4f}')
-print('\nDistribuzione dei cluster finali sui pixel totali:')
-print(df_ml['cluster'].value_counts().sort_index().to_string())
-print("\nAnteprima del Dataset finale pronto per la mappa geografica:")
-print(df_ml[['lat', 'lon', 'cluster']].head())
+### Successivamente, ricerchiamo il $K$ ottimale per il K-Means tramite Metodo del Gomito, Silhouette Score, CH e DB su un campione di pixel.
 """
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import (
@@ -639,191 +342,136 @@ from sklearn.metrics import (
     davies_bouldin_score,
     calinski_harabasz_score
 )
-from sklearn.model_selection import GridSearchCV
-from collections import Counter
+from scipy.optimize import linear_sum_assignment
+from sklearn.metrics import confusion_matrix
+from matplotlib.colors import ListedColormap
+
+#per allineamento colori
+def align_clusters(y_ref, y_target):
+    cm = confusion_matrix(y_ref, y_target)
+    row_ind, col_ind = linear_sum_assignment(-cm)
+    mapping = {target_col: ref_row for ref_row, target_col in zip(row_ind, col_ind)}
+    return np.array([mapping[val] for val in y_target])
+
+# Gestione installazione automatica di kneed
+try:
+    from kneed import KneeLocator
+except ImportError:
+    import sys, subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "kneed"])
+    from kneed import KneeLocator
 
 print("--- PREPARAZIONE DEL DATASET E STANDARDIZZAZIONE ---")
 
-# 1. Selezione feature ingegnerizzate
+# 1. Selezione feature e standardizzazione
 X_raw = df_ml[selected_ml_cols].values
-
-# 2. Standardizzazione
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_raw)
 
 print(f"Shape X_raw: {X_raw.shape}")
 print(f"Shape X_scaled: {X_scaled.shape}")
 
-# Campionamento per ottimizzazione
+# 2. Campionamento per velocizzare il calcolo delle metriche O(N^2)
 MAX_SAMPLES = 15000
 if X_scaled.shape[0] > MAX_SAMPLES:
     np.random.seed(42)
     idx = np.random.choice(X_scaled.shape[0], MAX_SAMPLES, replace=False)
     X_search = X_scaled[idx]
-    print(f"--> Dataset campionato a {MAX_SAMPLES} campioni per velocizzare le metriche.")
+    print(f"--> Dataset campionato a {MAX_SAMPLES} osservazioni per l'analisi dei K.")
 else:
     X_search = X_scaled
 
-# --- OPTUNA OPTIMIZATION ---
-try:
-    import optuna
-except ImportError:
-    import sys
-    import subprocess
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'optuna'])
-    import optuna
-
-optuna.logging.set_verbosity(optuna.logging.WARNING)
-
-def objective(trial):
-    n_clusters = trial.suggest_int('n_clusters', 2, 12)
-    n_init = trial.suggest_categorical('n_init', [10, 20])
-    max_iter = trial.suggest_int('max_iter', 200, 500, step=100)
-    init = trial.suggest_categorical('init', ['k-means++', 'random'])
-
-    model = KMeans(n_clusters=n_clusters, n_init=n_init, max_iter=max_iter, init=init, random_state=42)
-    labels = model.fit_predict(X_search)
-
-    if len(np.unique(labels)) < 2:
-        return -1
-    return silhouette_score(X_search, labels)
-
-study = optuna.create_study(direction='maximize')
-print("\nAvvio ottimizzazione con Optuna...")
-study.optimize(objective, n_trials=20)
-
-print('Best trial from Optuna:', study.best_trial.params)
-print(f'Best silhouette score from Optuna: {study.best_value:.4f}')
-
-# --- GRID SEARCH ---
-param_grid = {
-    'n_clusters': list(range(2, 13)),
-    'n_init': [10, 20],
-    'max_iter': [300]
-}
-
-def silhouette_scorer(estimator, X, y=None):
-    labels = estimator.labels_
-    if len(np.unique(labels)) < 2:
-        return -1
-    return silhouette_score(X, labels)
-
-cv_single_split = [(np.arange(len(X_search)), np.arange(len(X_search)))]
-grid_search = GridSearchCV(
-    estimator=KMeans(random_state=42, init='k-means++'),
-    param_grid=param_grid,
-    scoring=silhouette_scorer,
-    cv=cv_single_split,
-    n_jobs=-1
-)
-
-print("\nAvvio GridSearchCV...")
-grid_search.fit(X_search)
-print('Best params from GridSearchCV:', grid_search.best_params_)
-
-# --- METRICHE INTERNE AL VARIARE DI K (Inerzia, Silhouette, DBI, CH) ---
+# --- CALCOLO METRICHE INTERNE AL VARIARE DI K ---
 k_values = list(range(2, 13))
 inertia_values = []
 silhouette_scores = []
 db_scores = []
 ch_scores = []
 
-print("\nCalcolo metriche interne (Gomito, Silhouette, Davies-Bouldin, Calinski-Harabasz)...")
+print("\nCalcolo metriche (Inerzia, Silhouette, Davies-Bouldin, Calinski-Harabasz)...")
 for k in k_values:
-    model = KMeans(n_clusters=k, random_state=42, n_init=10)
+    # k-means++ garantisce convergenza veloce e stabile senza variare init/max_iter
+    model = KMeans(n_clusters=k, init="k-means++", n_init=10, max_iter=300, random_state=42)
     labels = model.fit_predict(X_search)
 
     inertia_values.append(model.inertia_)
     silhouette_scores.append(silhouette_score(X_search, labels))
-    db_scores.append(davies_bouldin_score(X_search, labels))          # Minimo = Migliore
-    ch_scores.append(calinski_harabasz_score(X_search, labels))      # Massimo = Migliore
+    db_scores.append(davies_bouldin_score(X_search, labels))       # Minimo = Migliore
+    ch_scores.append(calinski_harabasz_score(X_search, labels))   # Massimo = Migliore
 
-# Calcolo geometrico del punto di gomito (Distanza massima dalla corda)
-x_values = np.array(k_values, dtype=float)
-inertia_array = np.array(inertia_values, dtype=float)
-start_point = np.array([x_values[0], inertia_array[0]])
-end_point = np.array([x_values[-1], inertia_array[-1]])
-segment = end_point - start_point
-segment_norm = np.linalg.norm(segment)
+# --- INDIVIDUAZIONE AUTOMATICA DEI MIGLIORI K ---
+# Calcolo geometrico robusto del punto di gomito
+kneedle = KneeLocator(
+    k_values,
+    inertia_values,
+    curve="convex",
+    direction="decreasing",
+    interp_method="polynomial"
+)
+best_k_elbow = kneedle.elbow
 
-distances = []
-for x_val, in_val in zip(x_values, inertia_array):
-    point = np.array([x_val, in_val])
-    vector = point - start_point
-    dist = abs(segment[0] * vector[1] - segment[1] * vector[0]) / segment_norm if segment_norm != 0 else 0.0
-    distances.append(dist)
-
-best_k_elbow = k_values[int(np.argmax(distances))]
 best_k_silhouette = k_values[int(np.argmax(silhouette_scores))]
-best_k_dbi = k_values[int(np.argmin(db_scores))]            # Minimizzazione
-best_k_ch = k_values[int(np.argmax(ch_scores))]              # Massimizzazione
-best_k_optuna = int(study.best_trial.params['n_clusters'])
-best_k_grid = int(grid_search.best_params_['n_clusters'])
+best_k_dbi = k_values[int(np.argmin(db_scores))]
+best_k_ch = k_values[int(np.argmax(ch_scores))]
 
-# --- RIEPILOGO DEI K SUGGERITI ---
+# Tabella di riepilogo
 k_summary = pd.DataFrame({
-    'Metodo / Metrica': [
-        'Metodo del Gomito (Inerzia)',
-        'Silhouette Standard (Max)',
-        'Davies-Bouldin (Min)',
-        'Calinski-Harabasz (Max)',
-        'GridSearchCV (Silhouette)',
-        'Optuna (Silhouette)'
+    "Metodo / Metrica": [
+        "Metodo del Gomito (KneeLocator)",
+        "Silhouette Score (Max)",
+        "Davies-Bouldin (Min)",
+        "Calinski-Harabasz (Max)"
     ],
-    'K suggerito': [
-        best_k_elbow,
-        best_k_silhouette,
-        best_k_dbi,
-        best_k_ch,
-        best_k_grid,
-        best_k_optuna
-    ]
+    "Criterio": ["Punto di flesso", "Massimo", "Minimo", "Massimo"],
+    "K suggerito": [best_k_elbow, best_k_silhouette, best_k_dbi, best_k_ch]
 })
 
-print('\nRiepilogo completo dei K suggeriti:')
+print("\n--- RIEPILOGO K SUGGERITI ---")
 print(k_summary.to_string(index=False))
 
-# --- FORZATURA / SELEZIONE DEL K FINALE ---
-# Nota: se vuoi applicare K=5 esplicitamente per ragioni agronomiche:
-k_final = 5
-print(f'\n>>> K FINALE SCELTO PER IL MODELLO (Gomito + Forzatura Agronomica): {k_final} <<<')
+# --- SCELTA FINALE DI K ---
+# K=5 scelto unendo l'analisi tecnica al vincolo agronomico di dominio
+k_final = 6
+print(f"\n>>> K FINALE SCELTO PER IL MODELLO: {k_final} <<<")
 
-# --- PLOT DELLE 4 METRICHE A CONFRONTO ---
-fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+# --- PLOT DELLE 4 METRICHE ---
+fig, axes = plt.subplots(2, 2, figsize=(13, 9))
 
-# 1. Curva del Gomito
-axes[0, 0].plot(k_values, inertia_values, marker='o', color='#1f77b4')
-axes[0, 0].axvline(x=k_final, color='red', linestyle='--', label=f'K scelto = {k_final}')
-axes[0, 0].set_title('Curva del Gomito (Inerzia)')
-axes[0, 0].set_xlabel('Numero di Cluster (K)')
-axes[0, 0].set_ylabel('Inerzia intra-cluster')
+# 1. Gomito
+axes[0, 0].plot(k_values, inertia_values, marker="o", color="#1f77b4")
+if best_k_elbow is not None:
+    axes[0, 0].axvline(x=best_k_elbow, color="gray", linestyle=":", label=f"Gomito stimato = {best_k_elbow}")
+axes[0, 0].axvline(x=k_final, color="red", linestyle="--", label=f"K scelto = {k_final}")
+axes[0, 0].set_title("Curva del Gomito (Inerzia)")
+axes[0, 0].set_xlabel("K")
+axes[0, 0].set_ylabel("Inerzia intra-cluster")
 axes[0, 0].legend()
 axes[0, 0].grid(True)
 
-# 2. Silhouette Score (Max)
-axes[0, 1].plot(k_values, silhouette_scores, marker='o', color='#2ca02c')
-axes[0, 1].axvline(x=k_final, color='red', linestyle='--', label=f'K scelto = {k_final}')
-axes[0, 1].set_title('Coefficiente di Silhouette (Massimizzare)')
-axes[0, 1].set_xlabel('Numero di Cluster (K)')
-axes[0, 1].set_ylabel('Score medio')
+# 2. Silhouette
+axes[0, 1].plot(k_values, silhouette_scores, marker="o", color="#2ca02c")
+axes[0, 1].axvline(x=k_final, color="red", linestyle="--", label=f"K scelto = {k_final}")
+axes[0, 1].set_title("Coefficiente di Silhouette (Max)")
+axes[0, 1].set_xlabel("K")
+axes[0, 1].set_ylabel("Score medio")
 axes[0, 1].legend()
 axes[0, 1].grid(True)
 
-# 3. Davies-Bouldin Index (Min)
-axes[1, 0].plot(k_values, db_scores, marker='o', color='#ff7f0e')
-axes[1, 0].axvline(x=k_final, color='red', linestyle='--', label=f'K scelto = {k_final}')
-axes[1, 0].set_title('Indice Davies-Bouldin (Minimizzare)')
-axes[1, 0].set_xlabel('Numero di Cluster (K)')
-axes[1, 0].set_ylabel('DB Index')
+# 3. Davies-Bouldin
+axes[1, 0].plot(k_values, db_scores, marker="o", color="#ff7f0e")
+axes[1, 0].axvline(x=k_final, color="red", linestyle="--", label=f"K scelto = {k_final}")
+axes[1, 0].set_title("Indice Davies-Bouldin (Min)")
+axes[1, 0].set_xlabel("K")
+axes[1, 0].set_ylabel("DB Index")
 axes[1, 0].legend()
 axes[1, 0].grid(True)
 
-# 4. Calinski-Harabasz Index (Max)
-axes[1, 1].plot(k_values, ch_scores, marker='o', color='#9467bd')
-axes[1, 1].axvline(x=k_final, color='red', linestyle='--', label=f'K scelto = {k_final}')
-axes[1, 1].set_title('Indice Calinski-Harabasz (Massimizzare)')
-axes[1, 1].set_xlabel('Numero di Cluster (K)')
-axes[1, 1].set_ylabel('Score CH')
+# 4. Calinski-Harabasz
+axes[1, 1].plot(k_values, ch_scores, marker="o", color="#9467bd")
+axes[1, 1].axvline(x=k_final, color="red", linestyle="--", label=f"K scelto = {k_final}")
+axes[1, 1].set_title("Indice Calinski-Harabasz (Max)")
+axes[1, 1].set_xlabel("K")
+axes[1, 1].set_ylabel("CH Index")
 axes[1, 1].legend()
 axes[1, 1].grid(True)
 
@@ -831,46 +479,20 @@ plt.tight_layout()
 plt.show()
 
 # --- ADDESTRAMENTO FINALE SULL'INTERO DATASET ---
-print("\nEsecuzione del modello finale sull'intero dataset...")
+print(f"\nAddestramento del modello finale (K={k_final}) su {X_scaled.shape[0]} osservazioni...")
 final_model = KMeans(
     n_clusters=k_final,
-    init=study.best_trial.params.get('init', 'k-means++'),
-    n_init=int(study.best_trial.params.get('n_init', 20)),
-    max_iter=int(study.best_trial.params.get('max_iter', 300)),
+    init="k-means++",
+    n_init=20,          # Più run per convergenza ottimale sui dati completi
+    max_iter=300,
     random_state=42
 )
 
-final_labels = final_model.fit_predict(X_scaled)
-df_ml['cluster'] = final_labels
+df_ml["cluster"] = final_model.fit_predict(X_scaled)
 
-print(f'Inerzia finale: {final_model.inertia_:.4f}')
-print('\nDistribuzione dei cluster finali sui pixel totali:')
-print(df_ml['cluster'].value_counts().sort_index().to_string())
-
-"""#**Analisi dell'Ottimizzazione Bayesiana (Optuna)**
-###Analizziamo visivamente il processo di ottimizzazione degli iperparametri.
-###1. **Optimization History:** Mostra come la Silhouette è migliorata tentativo dopo tentativo.
-###2. **Parameter Importances:** Evidenzia quali iperparametri (es. n_clusters rispetto all'inizializzazione) hanno influenzato maggiormente la metrica.
-"""
-
-# Assicuriamoci di importare il modulo matplotlib per Optuna
-import optuna.visualization.matplotlib as optuna_plt
-import matplotlib.pyplot as plt
-
-print("--- ANALISI GRAFICA OTTIMIZZAZIONE OPTUNA ---")
-
-# 1. Grafico della storia dell'ottimizzazione
-plt.figure(figsize=(10, 6))
-optuna_plt.plot_optimization_history(study)
-plt.title("Storia dell'Ottimizzazione (Silhouette Score)")
-plt.tight_layout()
-plt.show()
-
-# 2. Grafico dell'importanza degli iperparametri
-plt.figure(figsize=(10, 6))
-optuna_plt.plot_param_importances(study)
-plt.tight_layout()
-plt.show()
+print(f"Inerzia finale: {final_model.inertia_:.2f}")
+print("\nDistribuzione finale dei cluster:")
+print(df_ml["cluster"].value_counts().sort_index().to_string())
 
 """#**Visualizzazione Avanzata delle Metriche (Yellowbrick)**
 ###Per validare visivamente la scelta del K ottimale e la qualità della
@@ -895,22 +517,22 @@ plt.figure(figsize=(10, 6))
 kelbow_visualizer(KMeans(random_state=42, init='k-means++', n_init=10), X_search, k=(2, 12))
 plt.show()
 
-# 2. GRAFICO DELLA SILHOUETTE (Per K=5)
-print("\n2. Generazione del profilo Silhouette per K=5...")
+# 2. GRAFICO DELLA SILHOUETTE (Per K=6)
+print("\n2. Generazione del profilo Silhouette per K=6...")
 plt.figure(figsize=(10, 6))
 # silhouette_visualizer calcola il coefficiente per ogni campione e lo colora
-silhouette_visualizer(KMeans(n_clusters=5, random_state=42, init='k-means++', n_init=10), X_search, colors='yellowbrick')
+silhouette_visualizer(KMeans(n_clusters=6, random_state=42, init='k-means++', n_init=10), X_search, colors='yellowbrick')
 plt.show()
 
-# 3. MAPPA DELLE DISTANZE INTER-CLUSTER (Per K=5)
-print("\n3. Generazione della Mappa delle Distanze Inter-Cluster per K=5...")
+# 3. MAPPA DELLE DISTANZE INTER-CLUSTER (Per K=6)
+print("\n3. Generazione della Mappa delle Distanze Inter-Cluster per K=6...")
 plt.figure(figsize=(10, 8))
 # intercluster_distance mappa i centroidi in 2D e ne mostra le dimensioni
-intercluster_distance(KMeans(n_clusters=5, random_state=42, init='k-means++', n_init=10), X_search)
+intercluster_distance(KMeans(n_clusters=6, random_state=42, init='k-means++', n_init=10), X_search)
 plt.show()
 
 """#**Visualizzazione dei Cluster nello Spazio delle Feature (PCA)**
-### Avendo a disposizione 15 feature (alta dimensionalità), non è possibile visualizzare direttamente i pixel in un grafico. Utilizziamo la Principal Component Analysis (PCA) per comprimere il dataset in 2 dimensioni principali.Questo scatter plot ci permette di verificare visivamente se i cluster pedologici individuati dal K-Means sono ben separati nello spazio chimico-fisico.
+### Avendo a disposizione 13 feature (alta dimensionalità), non è possibile visualizzare direttamente i pixel in un grafico. Utilizziamo la Principal Component Analysis (PCA) per comprimere il dataset in 2 dimensioni principali.Questo scatter plot ci permette di verificare visivamente se i cluster pedologici individuati dal K-Means sono ben separati nello spazio chimico-fisico.
 """
 
 from sklearn.decomposition import PCA
@@ -922,6 +544,9 @@ print("--- ANALISI DELLE COMPONENTI PRINCIPALI (PCA) ---")
 # Inizializziamo e applichiamo la PCA per ridurre a 2 dimensioni
 pca = PCA(n_components=2, random_state=42)
 X_pca = pca.fit_transform(X_scaled)
+
+final_labels = final_model.fit_predict(X_scaled)
+df_ml['cluster'] = final_labels
 
 # Creiamo un DataFrame temporaneo per il plotting
 df_pca = pd.DataFrame(data=X_pca, columns=['Componente Principale 1', 'Componente Principale 2'])
@@ -960,6 +585,8 @@ import matplotlib.colors as mcolors
 
 print("--- FASE 4: MAPPATURA SPAZIALE DEI CLUSTER ---")
 
+soil_cmap = ListedColormap(['#e41a1c', '#377eb8', '#984ea3', '#ffff33', '#f781bf', '#999999'])
+
 # 1. Ricostruzione della griglia spaziale
 # Impostiamo lat e lon come indici e convertiamo la colonna 'cluster' in una struttura xarray DataArray
 da_clusters = df_ml.set_index(['lat', 'lon'])['cluster'].to_xarray()
@@ -971,36 +598,7 @@ plt.figure(figsize=(10, 8))
 # Usiamo k_final che è stato dinamicamente scelto dalla tua pipeline
 cmap = plt.get_cmap('Set1', k_final)
 
-# 3. Creazione della mappa
-ax = plt.axes()
-da_clusters.plot(ax=ax, cmap=cmap, add_colorbar=False)
-
-# Aggiungiamo una colorbar personalizzata che mostri i numeri esatti dei cluster
-cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-0.5, vmax=k_final-0.5)),
-                    ticks=range(k_final),
-                    ax=ax)
-cbar.set_label('Suoli con Dinamiche Verticali Simili (Cluster)')
-
-plt.title(f"Mappatura dei Gradienti Verticali del Suolo (K={k_final})\nRegione Capitanata")
-plt.xlabel("Longitudine")
-plt.ylabel("Latitudine")
-
-plt.tight_layout()
-plt.show()
-
-"""#**Forzatura K=5 (Ragioni Agronomiche)**
-### Sebbene metriche come la Silhouette favoriscano k=2 (scindendo il territorio in modo binario), dal punto di vista agronomico e appoggiandoci al "Metodo del Gomito", forziamo l'algoritmo a partizionare il suolo in 6 cluster per cogliere le sfumature (es. differenza tra argille reattive e inattive).
-"""
-
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from sklearn.cluster import KMeans
-
-k_final = 5
-
-print(f"--- RICALCOLO DEL MODELLO E MAPPATURA CON K={k_final} ---")
-
-# Riadestriamo il modello finale con K=5
+# Riadestriamo il modello finale con K=6
 final_model = KMeans(
     n_clusters=k_final,
     init='k-means++',
@@ -1009,23 +607,21 @@ final_model = KMeans(
     random_state=42
 )
 
-# Riapplichiamo le etichette al DataFrame
+# Fit the model and get the labels
 final_labels = final_model.fit_predict(X_scaled)
+# Update the 'cluster' column in df_ml with the new labels
 df_ml['cluster'] = final_labels
 
+print(f'Inerzia finale: {final_model.inertia_:.4f}')
 print('\nDistribuzione dei cluster finali sui pixel totali:')
 print(df_ml['cluster'].value_counts().sort_index().to_string())
 
-# 2. MAPPATURA SPAZIALE
-da_clusters = df_ml.set_index(['lat', 'lon'])['cluster'].to_xarray()
-
-plt.figure(figsize=(10, 8))
-cmap = plt.get_cmap('Set1', k_final)
-
+# 3. Creazione della mappa
 ax = plt.axes()
-da_clusters.plot(ax=ax, cmap=cmap, add_colorbar=False)
+da_clusters.plot(ax=ax, cmap=soil_cmap, add_colorbar=False)
 
-cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-0.5, vmax=k_final-0.5)),
+# Aggiungiamo una colorbar personalizzata che mostri i numeri esatti dei cluster
+cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=soil_cmap, norm=mcolors.Normalize(vmin=-0.5, vmax=k_final-0.5)),
                     ticks=range(k_final),
                     ax=ax)
 cbar.set_label('Suoli con Dinamiche Verticali Simili (Cluster)')
@@ -1062,7 +658,7 @@ plt.tight_layout()
 plt.show()
 
 """#**FASE 3b/4b: Apprendimento Basato sulla Densità (DBSCAN)**
-### Per testare l'algoritmo DBSCAN cerchiamo prima l'Epsilon ottimale studiando la distanza K-NN. Il parametro `min_samples` viene settato a 30 per gestire le 15 variabili. Poiché operiamo in uno spazio di feature ad altissima dimensionalità, ci aspettiamo un forte impatto, con molti pixel sparsi visti come rumore o anomalia (-1).
+### Per testare l'algoritmo DBSCAN cerchiamo prima l'Epsilon ottimale studiando la distanza K-NN. Il parametro `min_samples` viene settato a 26 per gestire le 13 variabili. Poiché operiamo in uno spazio di feature ad altissima dimensionalità, ci aspettiamo un forte impatto, con molti pixel sparsi visti come rumore o anomalia (-1).
 """
 
 from sklearn.cluster import HDBSCAN
@@ -1158,46 +754,46 @@ plt.tight_layout()
 plt.show()
 
 """#**FASE 3c/4c: Clustering Gerarchico (Bisecting K-Means)**
-### Valutiamo un approccio di partizionamento alternativo. A differenza del K-Means puro, il Bisecting K-Means suddivide un macro-cluster globale in un approccio iterativo *top-down*. Fissiamo $K=5$ per rendere il paragone finale il più equo possibile.
+### Valutiamo un approccio di partizionamento alternativo. A differenza del K-Means puro, il Bisecting K-Means suddivide un macro-cluster globale in un approccio iterativo *top-down*. Fissiamo $K=6$ per rendere il paragone finale il più equo possibile.
 """
 
 from sklearn.cluster import BisectingKMeans
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-print("--- FASE 3c: ADDESTRAMENTO BISECTING K-MEANS ---")
+print("--- FASE 3c: ADDESTRAMENTO E MAPPATURA BISECTING K-MEANS ---")
 
-K_BISECTING = 5
-
-print(f"Addestramento in corso con K={K_BISECTING}...")
+K_BISECTING = 6
 bisect_kmeans = BisectingKMeans(n_clusters=K_BISECTING, random_state=42)
 
-# Addestriamo e salviamo le etichette in una nuova colonna
-df_ml['cluster_bisecting'] = bisect_kmeans.fit_predict(X_scaled)
+# Fit e predizione con allineamento immediato delle etichette
+bisect_labels = bisect_kmeans.fit_predict(X_scaled)
+df_ml["cluster_bisecting"] = align_clusters(df_ml["cluster"], bisect_labels)
 
-print("\nDistribuzione dei cluster Bisecting K-Means:")
+print("\nDistribuzione dei cluster Bisecting K-Means (allineati):")
 print(df_ml['cluster_bisecting'].value_counts().sort_index().to_string())
 
-print("\n--- FASE 4c: MAPPATURA SPAZIALE BISECTING K-MEANS ---")
-
-# Ricostruzione della griglia spaziale
+# Costruzione della griglia spaziale
 da_bisecting = df_ml.set_index(['lat', 'lon'])['cluster_bisecting'].to_xarray()
 
+# Visualizzazione spaziale
 plt.figure(figsize=(10, 8))
-cmap = plt.get_cmap('Set1', K_BISECTING)
-
 ax = plt.axes()
-da_bisecting.plot(ax=ax, cmap=cmap, add_colorbar=False)
+da_bisecting.plot(ax=ax, cmap=soil_cmap, add_colorbar=False)
 
-cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-0.5, vmax=K_BISECTING-0.5)),
-                    ticks=range(K_BISECTING),
-                    ax=ax)
-cbar.set_label('Cluster (Bisecting K-Means)')
+cbar = plt.colorbar(
+    plt.cm.ScalarMappable(
+        cmap=soil_cmap,
+        norm=mcolors.Normalize(vmin=-0.5, vmax=K_BISECTING - 0.5)
+    ),
+    ticks=range(K_BISECTING),
+    ax=ax
+)
+cbar.set_label('Cluster (Bisecting K-Means - Allineato)')
 
-plt.title(f"Mappatura Bisecting K-Means dei Gradienti del Suolo (K={K_BISECTING})\nRegione Capitanata")
+plt.title(f"Mappatura Bisecting K-Means (K={K_BISECTING} - Colori Allineati)\nRegione Capitanata")
 plt.xlabel("Longitudine")
 plt.ylabel("Latitudine")
-
 plt.tight_layout()
 plt.show()
 
@@ -1241,10 +837,10 @@ for n in n_components_range:
 fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 ax.plot(list(n_components_range), bic_scores, marker='o', color='#1f77b4', label='BIC (Bayesian Information Criterion)')
 ax.plot(list(n_components_range), aic_scores, marker='s', color='#ff7f0e', label='AIC (Akaike Information Criterion)')
-ax.axvline(x=5, color='red', linestyle='--', alpha=0.7, label='K scelto = 5')
+ax.axvline(x=6, color='red', linestyle='--', alpha=0.7, label='K scelto = 6')
 ax.set_xlabel('Numero di Componenti Gaussiane')
 ax.set_ylabel('Score (più basso = migliore)')
-ax.set_title('Selezione del Modello GMM: BIC vs AIC', fontsize=14)
+ax.set_title('Selezione del Modello GMM: BIC vs AIC (K scelto = 6)', fontsize=14)
 ax.legend()
 ax.grid(True, alpha=0.3)
 plt.tight_layout()
@@ -1252,129 +848,72 @@ plt.show()
 
 best_n_bic = list(n_components_range)[np.argmin(bic_scores)]
 best_n_aic = list(n_components_range)[np.argmin(aic_scores)]
-print(f"\nNumero ottimale di componenti secondo BIC: {best_n_bic}")
-print(f"Numero ottimale di componenti secondo AIC: {best_n_aic}")
+print(f"\nNumero ottimale di componenti secondo BIC: {best_n_bic} (Configurato a K=6 per coerenza)")
+print(f"  -> Per mantenere il confronto omogeneo useremo K=6 come stabilito.")
 
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
 
-print("--- ADDESTRAMENTO GMM FINALE E MAPPATURA SPAZIALE ---")
+print("--- ADDESTRAMENTO GMM E MAPPATURA SPAZIALE ---")
 
-# Fissiamo K=5 per un confronto equo con K-Means e Bisecting K-Means
-K_GMM = 5
-
+K_GMM = 6
 gmm_model = GaussianMixture(
     n_components=K_GMM,
-    covariance_type='full',   # Cluster ellissoidali (il vantaggio rispetto a K-Means)
-    n_init=10,                # 10 inizializzazioni diverse per evitare minimi locali
+    covariance_type='full',
+    n_init=10,
     random_state=42,
     max_iter=300
 )
 
-# Fit sull'intero dataset scalato
+# Fit e predizione
 gmm_model.fit(X_scaled)
-
-# Assegnazione hard (cluster più probabile per ogni pixel)
 gmm_labels = gmm_model.predict(X_scaled)
-df_ml['cluster_gmm'] = gmm_labels
+df_ml['cluster_gmm'] = align_clusters(df_ml['cluster'], gmm_labels)
 
-# Probabilità di appartenenza (soft assignment) - il vero vantaggio del GMM
+# Calcolo probabilità (soft assignment) per diagnostica incertezza
 gmm_probs = gmm_model.predict_proba(X_scaled)
+max_probs = gmm_probs.max(axis=1)
+uncertain_pixels = np.sum(max_probs < 0.7)
 
 print(f"Convergenza raggiunta: {gmm_model.converged_}")
-print(f"Numero di iterazioni EM: {gmm_model.n_iter_}")
 print(f"Log-likelihood finale: {gmm_model.score(X_scaled):.4f}")
 print(f"BIC: {gmm_model.bic(X_scaled):.2f}")
 print(f"AIC: {gmm_model.aic(X_scaled):.2f}")
 
-print('\nDistribuzione dei cluster GMM (assegnazione hard):')
+print('\nDistribuzione dei cluster GMM (allineati):')
 print(df_ml['cluster_gmm'].value_counts().sort_index().to_string())
 
-# Analisi dell'incertezza: quanti pixel hanno probabilità < 0.7 per il cluster assegnato?
-max_probs = gmm_probs.max(axis=1)
-uncertain_pixels = np.sum(max_probs < 0.7)
 print(f'\nPixel con assegnazione incerta (prob < 70%): {uncertain_pixels} ({uncertain_pixels/len(max_probs)*100:.1f}%)')
 print(f'Probabilità media del cluster assegnato: {max_probs.mean():.3f}')
 
-# --- MAPPATURA SPAZIALE ---
-print("\n--- FASE 4d: MAPPATURA SPAZIALE GMM ---")
-
+# Costruzione griglia e visualizzazione spaziale
 da_gmm = df_ml.set_index(['lat', 'lon'])['cluster_gmm'].to_xarray()
 
 plt.figure(figsize=(10, 8))
-cmap = plt.get_cmap('Set1', K_GMM)
-
 ax = plt.axes()
-da_gmm.plot(ax=ax, cmap=cmap, add_colorbar=False)
+da_gmm.plot(ax=ax, cmap=soil_cmap, add_colorbar=False)
 
-cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-0.5, vmax=K_GMM-0.5)),
-                    ticks=range(K_GMM),
-                    ax=ax)
-cbar.set_label('Cluster GMM (Expectation-Maximization)')
+cbar = plt.colorbar(
+    plt.cm.ScalarMappable(
+        cmap=soil_cmap,
+        norm=mcolors.Normalize(vmin=-0.5, vmax=K_GMM - 0.5)
+    ),
+    ticks=range(K_GMM),
+    ax=ax
+)
+cbar.set_label('Cluster GMM (Expectation-Maximization - Allineato)')
 
-plt.title(f"Mappatura GMM dei Gradienti Verticali del Suolo (K={K_GMM})\nRegione Capitanata")
+plt.title(f"Mappatura GMM (K={K_GMM} - Colori Allineati)\nRegione Capitanata")
 plt.xlabel("Longitudine")
 plt.ylabel("Latitudine")
-
 plt.tight_layout()
 plt.show()
 
 """#**FASE 6: Cluster Validation**
 ### Concludiamo l'analisi misurando le performance dei modelli allenati. Trattandosi di algoritmi senza etichette predefinite, ci affidiamo ad indici interni: la Sum of Squared Error (SSE), per minimizzare la varianza interna, e il Coefficiente di Silhouette, per valutare la corretta separazione spaziale.
 """
-
-# import pandas as pd
-# from sklearn.metrics import silhouette_score
-
-# print("--- FASE 6: CLUSTER VALIDATION (Confronto Modelli) ---")
-
-# if 'idx' in locals():
-#     sample_labels_kmeans = final_labels[idx]
-#     sample_labels_dbscan = dbscan_labels[idx]
-#     sample_labels_bisecting = df_ml['cluster_bisecting'].values[idx]
-# else:
-#     sample_labels_kmeans = final_labels
-#     sample_labels_dbscan = dbscan_labels
-#     sample_labels_bisecting = df_ml['cluster_bisecting'].values
-
-# print("Calcolo dei Coefficienti di Silhouette in corso...")
-
-# # Calcolo Silhouette Score
-# # Il DBSCAN potrebbe avere solo l'etichetta -1 nel campione se il rumore è troppo alto
-# try:
-#     sil_kmeans = silhouette_score(X_search, sample_labels_kmeans)
-# except ValueError:
-#     sil_kmeans = "N/A"
-
-# try:
-#     sil_dbscan = silhouette_score(X_search, sample_labels_dbscan)
-# except ValueError:
-#     sil_dbscan = "N/A"
-
-# try:
-#     sil_bisecting = silhouette_score(X_search, sample_labels_bisecting)
-# except ValueError:
-#     sil_bisecting = "N/A"
-
-# # Recupero della Sum of Squared Error (SSE / Inertia)
-# # L'SSE misura la coesione interna del cluster
-# sse_kmeans = final_model.inertia_
-# sse_bisecting = bisect_kmeans.inertia_
-# sse_dbscan = "N/A (Density-based)"
-
-# # Creazione tabella riassuntiva
-# validation_results = pd.DataFrame({
-#     'Algoritmo': ['K-Means (K=5)', 'Bisecting K-Means (K=5)', f'DBSCAN (eps={2.0})'],
-#     'Silhouette Score (↑ Migliore)': [sil_kmeans, sil_bisecting, sil_dbscan],
-#     'SSE / Inertia (↓ Migliore)': [sse_kmeans, sse_bisecting, sse_dbscan]
-# })
-
-# print("\nTabella di Validazione Interna e Relativa dei Cluster:")
-# print("-" * 70)
-# print(validation_results.to_string(index=False))
-# print("-" * 70)
 
 import pandas as pd
 import numpy as np
@@ -1403,18 +942,6 @@ try:
 except ValueError:
     sil_kmeans = "N/A"
 
-# FIX: Per DBSCAN, escludiamo i punti di rumore (label = -1) dal calcolo della Silhouette.
-# Includere il rumore penalizzerebbe artificialmente il DBSCAN, perché i punti
-# etichettati come -1 non appartengono a nessun cluster e generano silhouette
-# fortemente negative, trascinando giù la media complessiva.
-#
-# --- Vecchio codice (SCORRETTO - include il rumore): ---
-# try:
-#     sil_dbscan = silhouette_score(X_val, sample_labels_dbscan)
-# except ValueError:
-#     sil_dbscan = "N/A"
-#
-# --- Nuovo codice (CORRETTO - esclude il rumore): ---
 mask_no_noise = sample_labels_dbscan != -1
 n_noise_sample = np.sum(~mask_no_noise)
 n_clusters_dbscan = len(np.unique(sample_labels_dbscan[mask_no_noise]))
@@ -1428,6 +955,12 @@ except ValueError:
 
 print(f"  -> DBSCAN: {n_noise_sample} punti di rumore esclusi dal calcolo Silhouette")
 
+# Bisecting K-Means
+try:
+    sil_bisecting = silhouette_score(X_val, sample_labels_bisecting)
+except ValueError:
+    sil_bisecting = "N/A"
+
 # GMM (EM)
 try:
     sil_gmm = silhouette_score(X_val, sample_labels_gmm)
@@ -1440,11 +973,11 @@ sse_bisecting = bisect_kmeans.inertia_
 sse_dbscan = "N/A (Density-based)"
 sse_gmm = "N/A (Likelihood-based)"
 
-# Creazione tabella riassuntiva
+# Creazione tabella riassuntiva (Uniformata con K=6)
 validation_results = pd.DataFrame({
     'Algoritmo': [
-        'K-Means (K=5)',
-        'Bisecting K-Means (K=5)',
+        'K-Means (K=6)',
+        'Bisecting K-Means (K=6)',
         f'DBSCAN (eps={EPS_SCELTO})',
         f'GMM / EM (K={K_GMM})'
     ],
@@ -1457,6 +990,16 @@ print("-" * 80)
 print(validation_results.to_string(index=False))
 print("-" * 80)
 
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
+
+ari_km_bisect = adjusted_rand_score(df_ml['cluster'], df_ml['cluster_bisecting'])
+ari_km_gmm = adjusted_rand_score(df_ml['cluster'], df_ml['cluster_gmm'])
+nmi_km_gmm = normalized_mutual_info_score(df_ml['cluster'], df_ml['cluster_gmm'])
+
+print(f"ARI (K-Means vs Bisecting): {ari_km_bisect:.3f}")
+print(f"ARI (K-Means vs GMM): {ari_km_gmm:.3f}")
+print(f"NMI (K-Means vs GMM): {nmi_km_gmm:.3f}")
+
 """#**FASE 6b: Efficienza sui Grandi Dati (Mini-Batch K-Means)**
 ### Avendo un dataset spaziale molto grande (~94.000 pixel), l'addestramento del K-Means standard richiede molte risorse geometriche. Testiamo l'algoritmo `MiniBatchKMeans`, che elabora i dati a piccoli blocchi, per valutare il trade-off tra velocità di addestramento (tempo in secondi) e precisione del clustering (Inerzia/SSE).
 """
@@ -1467,8 +1010,8 @@ import pandas as pd
 
 print("--- FASE 6b: CONFRONTO EFFICIENZA K-MEANS vs MINI-BATCH K-MEANS ---")
 
-# Utilizziamo il K=5 scelto precedentemente
-k_final = 5
+# Utilizziamo il K=6 scelto coerentemente
+k_final = 6
 
 # 1. Test K-Means Standard sull'intero dataset
 print("Addestramento K-Means standard in corso...")

@@ -15,9 +15,9 @@
 \newlabel{sec:dati}{{3}{4}{Dataset e Ingestione Dati}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Fonte dei Dati: SoilGrids}{4}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Variabili del Dataset}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Variabili pedologiche utilizzate nel progetto.}}{4}{table.caption.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Variabili pedologiche utilizzate nel progetto.}}{5}{table.caption.2}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:variabili}{{1}{4}{Variabili pedologiche utilizzate nel progetto}{table.caption.2}{}}
+\newlabel{tab:variabili}{{1}{5}{Variabili pedologiche utilizzate nel progetto}{table.caption.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Pipeline di Ingestione e Integrazione}{5}{subsection.3.3}\protected@file@percent }
 \newlabel{lst:tif}{{1}{5}{Integrazione dei file TIF con scaling condizionato}{lstlisting.1}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces Integrazione dei file TIF con scaling condizionato.}}{5}{lstlisting.1}\protected@file@percent }
@@ -25,96 +25,99 @@
 \newlabel{sec:eda}{{4}{6}{Analisi Esplorativa dei Dati (EDA)}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Estrazione e Pulizia dello Strato Superficiale}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Controlli di Consistenza}{6}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Analisi delle Distribuzioni}{6}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Distribuzioni delle variabili pedologiche nello strato superficiale (0--5\,cm). Le curve KDE evidenziano eventuali asimmetrie e multimodalità.}}{7}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:distribuzioni}{{1}{7}{Distribuzioni delle variabili pedologiche nello strato superficiale (0--5\,cm). Le curve KDE evidenziano eventuali asimmetrie e multimodalità}{figure.caption.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Matrice di Correlazione}{7}{subsection.4.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Matrice di correlazione delle variabili pedologiche superficiali. I valori numerici sono annotati nella heatmap \texttt  {coolwarm}.}}{8}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:correlazione}{{2}{8}{Matrice di correlazione delle variabili pedologiche superficiali. I valori numerici sono annotati nella heatmap \texttt {coolwarm}}{figure.caption.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Feature Engineering: Gradienti Verticali}{8}{section.5}\protected@file@percent }
-\newlabel{sec:feat_eng}{{5}{8}{Feature Engineering: Gradienti Verticali}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Motivazione}{8}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Delta Totale}{8}{subsection.5.2}\protected@file@percent }
-\newlabel{eq:delta}{{1}{9}{Delta Totale}{equation.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Gradienti Normalizzati}{9}{subsection.5.3}\protected@file@percent }
-\newlabel{eq:gradiente}{{2}{9}{Gradienti Normalizzati}{equation.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Punti medi degli strati di profondità SoilGrids.}}{9}{table.caption.5}\protected@file@percent }
-\newlabel{tab:midpoints}{{2}{9}{Punti medi degli strati di profondità SoilGrids}{table.caption.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Selezione delle 15 Feature Finali}{9}{subsection.5.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Le 15 feature selezionate per il clustering, raggruppate per tipologia.}}{10}{table.caption.6}\protected@file@percent }
-\newlabel{tab:feature}{{3}{10}{Le 15 feature selezionate per il clustering, raggruppate per tipologia}{table.caption.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Analisi di Correlazione delle Feature Ingegnerizzate}{10}{subsection.5.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Matrice di correlazione dei delta totali (fondo -- superficie) per le 5 variabili principali.}}{11}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:corr_delta}{{3}{11}{Matrice di correlazione dei delta totali (fondo -- superficie) per le 5 variabili principali}{figure.caption.7}{}}
-\newlabel{fig:corr_topsoil}{{4a}{11}{Transizioni superficiali (0--30\,cm)}{figure.caption.8}{}}
-\newlabel{sub@fig:corr_topsoil}{{a}{11}{Transizioni superficiali (0--30\,cm)}{figure.caption.8}{}}
-\newlabel{fig:corr_deep}{{4b}{11}{Dinamiche profonde (30--200\,cm)}{figure.caption.8}{}}
-\newlabel{sub@fig:corr_deep}{{b}{11}{Dinamiche profonde (30--200\,cm)}{figure.caption.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Correlazione dei gradienti normalizzati per zona di profondità.}}{11}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:corr_gradienti}{{4}{11}{Correlazione dei gradienti normalizzati per zona di profondità}{figure.caption.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Metodologia}{11}{section.6}\protected@file@percent }
-\newlabel{sec:metodologia}{{6}{11}{Metodologia}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Standardizzazione dei Dati}{11}{subsection.6.1}\protected@file@percent }
-\newlabel{eq:scaler}{{3}{12}{Standardizzazione dei Dati}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Analisi delle Distribuzioni}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Distribuzioni delle variabili pedologiche nello strato superficiale (0--5\,cm). Le curve KDE evidenziano eventuali asimmetrie e multimodalità.}}{8}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:distribuzioni}{{1}{8}{Distribuzioni delle variabili pedologiche nello strato superficiale (0--5\,cm). Le curve KDE evidenziano eventuali asimmetrie e multimodalità}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Matrice di Correlazione}{8}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Matrice di correlazione delle variabili pedologiche superficiali. I valori numerici sono annotati nella heatmap \texttt  {coolwarm}.}}{9}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:correlazione}{{2}{9}{Matrice di correlazione delle variabili pedologiche superficiali. I valori numerici sono annotati nella heatmap \texttt {coolwarm}}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Feature Engineering: Gradienti Verticali}{9}{section.5}\protected@file@percent }
+\newlabel{sec:feat_eng}{{5}{9}{Feature Engineering: Gradienti Verticali}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Motivazione}{9}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Gradienti Normalizzati}{9}{subsection.5.2}\protected@file@percent }
+\newlabel{eq:gradiente}{{1}{10}{Gradienti Normalizzati}{equation.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Punti medi degli strati di profondità SoilGrids.}}{10}{table.caption.5}\protected@file@percent }
+\newlabel{tab:midpoints}{{2}{10}{Punti medi degli strati di profondità SoilGrids}{table.caption.5}{}}
+\newlabel{lst:gradient}{{2}{10}{Calcolo dei gradienti normalizzati tra strati consecutivi}{lstlisting.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Calcolo dei gradienti normalizzati tra strati consecutivi.}}{10}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Selezione delle 13 Feature Finali}{10}{subsection.5.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Le 13 feature selezionate per il clustering, raggruppate per tipologia pedologica.}}{11}{table.caption.6}\protected@file@percent }
+\newlabel{tab:feature}{{3}{11}{Le 13 feature selezionate per il clustering, raggruppate per tipologia pedologica}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Analisi di Correlazione delle Feature Ingegnerizzate}{11}{subsection.5.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Matrice di correlazione (triangolo inferiore) dei 13 gradienti verticali normalizzati. Nessuna coppia supera la soglia critica $|r| > 0.8$.}}{12}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:corr_gradienti}{{3}{12}{Matrice di correlazione (triangolo inferiore) dei 13 gradienti verticali normalizzati. Nessuna coppia supera la soglia critica $|r| > 0.8$}{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Metodologia}{12}{section.6}\protected@file@percent }
+\newlabel{sec:metodologia}{{6}{12}{Metodologia}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Standardizzazione dei Dati}{12}{subsection.6.1}\protected@file@percent }
+\newlabel{eq:scaler}{{2}{12}{Standardizzazione dei Dati}{equation.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Campionamento per Ottimizzazione}{12}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Algoritmo 1: K-Means}{12}{subsection.6.3}\protected@file@percent }
-\newlabel{eq:sse}{{4}{12}{Algoritmo 1: K-Means}{equation.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}Ricerca del K Ottimale}{12}{subsubsection.6.3.1}\protected@file@percent }
-\newlabel{lst:optuna}{{2}{13}{Ricerca iperparametri con Optuna}{lstlisting.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Ricerca iperparametri con Optuna.}}{13}{lstlisting.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}Forzatura Agronomica a K=5}{13}{subsubsection.6.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Algoritmo 2: DBSCAN}{13}{subsection.6.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Grafico delle distanze K-NN per la determinazione dell'epsilon ottimale del DBSCAN.}}{14}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:knn}{{5}{14}{Grafico delle distanze K-NN per la determinazione dell'epsilon ottimale del DBSCAN}{figure.caption.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Algoritmo 3: Bisecting K-Means}{14}{subsection.6.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Riduzione Dimensionale: PCA}{14}{subsection.6.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.7}Metriche di Validazione}{14}{subsection.6.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Coefficiente di Silhouette.}{14}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Sum of Squared Error (SSE / Inerzia).}{15}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Risultati Sperimentali}{15}{section.7}\protected@file@percent }
-\newlabel{sec:risultati}{{7}{15}{Risultati Sperimentali}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Ricerca del K Ottimale}{15}{subsection.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Riepilogo dei valori di $K$ suggeriti dai quattro metodi.}}{15}{table.caption.12}\protected@file@percent }
-\newlabel{tab:kottimale}{{4}{15}{Riepilogo dei valori di $K$ suggeriti dai quattro metodi}{table.caption.12}{}}
-\newlabel{fig:elbow}{{6a}{15}{Curva del gomito (Inerzia vs $K$)}{figure.caption.13}{}}
-\newlabel{sub@fig:elbow}{{a}{15}{Curva del gomito (Inerzia vs $K$)}{figure.caption.13}{}}
-\newlabel{fig:sil_curve}{{6b}{15}{Coefficiente di Silhouette vs $K$}{figure.caption.13}{}}
-\newlabel{sub@fig:sil_curve}{{b}{15}{Coefficiente di Silhouette vs $K$}{figure.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Metriche per la selezione del $K$ ottimale.}}{15}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:k_selection}{{6}{15}{Metriche per la selezione del $K$ ottimale}{figure.caption.13}{}}
-\newlabel{fig:optuna_hist}{{7a}{16}{Storia dell'ottimizzazione Optuna}{figure.caption.14}{}}
-\newlabel{sub@fig:optuna_hist}{{a}{16}{Storia dell'ottimizzazione Optuna}{figure.caption.14}{}}
-\newlabel{fig:optuna_imp}{{7b}{16}{Importanza degli iperparametri (Optuna)}{figure.caption.14}{}}
-\newlabel{sub@fig:optuna_imp}{{b}{16}{Importanza degli iperparametri (Optuna)}{figure.caption.14}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Analisi dell'ottimizzazione bayesiana con Optuna.}}{16}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:optuna}{{7}{16}{Analisi dell'ottimizzazione bayesiana con Optuna}{figure.caption.14}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Visualizzazione Avanzata con Yellowbrick}{16}{subsection.7.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Distanza inter-cluster (Yellowbrick) per la validazione del clustering.}}{16}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:yellowbrick}{{8}{16}{Distanza inter-cluster (Yellowbrick) per la validazione del clustering}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Proiezione PCA dei Cluster}{16}{subsection.7.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Proiezione PCA 2D dei cluster $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.3\hskip 1em\relax Proiezione PCA dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ -Means{}. Le percentuali sugli assi indicano la varianza spiegata da ciascuna componente.}}{17}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:pca}{{9}{17}{Proiezione PCA 2D dei cluster \kmeans {}. Le percentuali sugli assi indicano la varianza spiegata da ciascuna componente}{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mappatura Spaziale dei Cluster}{17}{subsection.7.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Mappatura spaziale dei cluster $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.4\hskip 1em\relax Mappatura Spaziale dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ -Means{} con $K{=}5$ sulla regione Capitanata. La coerenza geografica dei cluster conferma la validità pedologica dell'analisi.}}{18}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:mappa_kmeans}{{10}{18}{Mappatura spaziale dei cluster \kmeans {} con \kval {5} sulla regione Capitanata. La coerenza geografica dei cluster conferma la validità pedologica dell'analisi}{figure.caption.17}{}}
-\newlabel{fig:mappa_dbscan}{{11a}{18}{DBSCAN ($\varepsilon =1.8$, \texttt {min\_samples}=30)}{figure.caption.18}{}}
-\newlabel{sub@fig:mappa_dbscan}{{a}{18}{DBSCAN ($\varepsilon =1.8$, \texttt {min\_samples}=30)}{figure.caption.18}{}}
-\newlabel{fig:mappa_bisecting}{{11b}{18}{Bisecting \kmeans {} ($K=5$)}{figure.caption.18}{}}
-\newlabel{sub@fig:mappa_bisecting}{{b}{18}{Bisecting \kmeans {} ($K=5$)}{figure.caption.18}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Confronto delle mappature spaziali per DBSCAN e Bisecting $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.4\hskip 1em\relax Mappatura Spaziale dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ -Means{}.}}{18}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:mappe_alt}{{11}{18}{Confronto delle mappature spaziali per DBSCAN e Bisecting \kmeans {}}{figure.caption.18}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Profilazione dei Cluster}{18}{subsection.7.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Profilo agronomico dei cluster basato sugli Z-score dei centroidi. Valori positivi (rossi) indicano gradienti superiori alla media regionale; valori negativi (blu) indicano gradienti inferiori.}}{19}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:profili}{{12}{19}{Profilo agronomico dei cluster basato sugli Z-score dei centroidi. Valori positivi (rossi) indicano gradienti superiori alla media regionale; valori negativi (blu) indicano gradienti inferiori}{figure.caption.19}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Validazione e Confronto dei Modelli}{19}{subsection.7.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Confronto delle metriche di validazione interna.}}{19}{table.caption.20}\protected@file@percent }
-\newlabel{tab:validazione}{{5}{19}{Confronto delle metriche di validazione interna}{table.caption.20}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Efficienza Computazionale: K-Means vs Mini-Batch K-Means}{19}{subsection.7.7}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Confronto efficienza su $\sim $94\,000 pixel.}}{20}{table.caption.21}\protected@file@percent }
-\newlabel{tab:efficienza}{{6}{20}{Confronto efficienza su $\sim $94\,000 pixel}{table.caption.21}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Discussione e Conclusioni}{20}{section.8}\protected@file@percent }
-\newlabel{sec:conclusioni}{{8}{20}{Discussione e Conclusioni}{section.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Sintesi dei Risultati}{20}{subsection.8.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Limiti dello Studio}{20}{subsection.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Sviluppi Futuri}{21}{subsection.8.3}\protected@file@percent }
-\gdef \@abspage@last{22}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Algoritmo 1: K-Means}{13}{subsection.6.3}\protected@file@percent }
+\newlabel{eq:sse}{{3}{13}{Algoritmo 1: K-Means}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}Ricerca del K Ottimale}{13}{subsubsection.6.3.1}\protected@file@percent }
+\newlabel{lst:metriche_k}{{3}{13}{Calcolo delle quattro metriche per la ricerca del K ottimale}{lstlisting.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Calcolo delle quattro metriche per la ricerca del K ottimale.}}{13}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}Scelta Finale: K=6}{14}{subsubsection.6.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Algoritmo 2: DBSCAN}{14}{subsection.6.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Grafico delle distanze K-NN per la determinazione dell'epsilon ottimale del DBSCAN. Il punto di ginocchio è stato individuato nella regione $\varepsilon \approx 1.9$.}}{15}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:knn}{{4}{15}{Grafico delle distanze K-NN per la determinazione dell'epsilon ottimale del DBSCAN. Il punto di ginocchio è stato individuato nella regione $\varepsilon \approx 1.9$}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Algoritmo 3: Bisecting K-Means}{15}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Algoritmo 4: Gaussian Mixture Model (EM)}{15}{subsection.6.6}\protected@file@percent }
+\newlabel{subsec:gmm}{{6.6}{15}{Algoritmo 4: Gaussian Mixture Model (EM)}{subsection.6.6}{}}
+\newlabel{eq:gmm}{{6}{15}{Algoritmo 4: Gaussian Mixture Model (EM)}{equation.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7}Riduzione Dimensionale: PCA}{17}{subsection.6.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.8}Metriche di Validazione}{17}{subsection.6.8}\protected@file@percent }
+\newlabel{subsec:metriche}{{6.8}{17}{Metriche di Validazione}{subsection.6.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Coefficiente di Silhouette.}{17}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sum of Squared Error (SSE / Inerzia).}{17}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{BIC e AIC.}{17}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Adjusted Rand Index (ARI).}{17}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Normalized Mutual Information (NMI).}{17}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Risultati Sperimentali}{18}{section.7}\protected@file@percent }
+\newlabel{sec:risultati}{{7}{18}{Risultati Sperimentali}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Ricerca del K Ottimale}{18}{subsection.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Riepilogo dei valori di $K$ suggeriti dai quattro metodi.}}{18}{table.caption.14}\protected@file@percent }
+\newlabel{tab:kottimale}{{4}{18}{Riepilogo dei valori di $K$ suggeriti dai quattro metodi}{table.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Le quattro metriche per la selezione del $K$ ottimale: Curva del Gomito (Inerzia), Coefficiente di Silhouette, Indice di Davies-Bouldin e Indice di Calinski-Harabasz. La linea tratteggiata rossa indica $K=6$.}}{18}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:k_selection}{{5}{18}{Le quattro metriche per la selezione del $K$ ottimale: Curva del Gomito (Inerzia), Coefficiente di Silhouette, Indice di Davies-Bouldin e Indice di Calinski-Harabasz. La linea tratteggiata rossa indica $K=6$}{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Visualizzazione Avanzata con Yellowbrick}{19}{subsection.7.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Profilo Silhouette per $K=6$ (Yellowbrick). Ogni ``lama'' rappresenta un cluster: la coesione interna è indicata dall'ampiezza orizzontale, la linea tratteggiata verticale segna la media globale.}}{19}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:yb_silhouette}{{6}{19}{Profilo Silhouette per $K=6$ (Yellowbrick). Ogni ``lama'' rappresenta un cluster: la coesione interna è indicata dall'ampiezza orizzontale, la linea tratteggiata verticale segna la media globale}{figure.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Mappa delle distanze inter-cluster (Yellowbrick). I centroidi sono proiettati in 2D; la dimensione dei cerchi è proporzionale al numero di pixel assegnati a ciascun cluster.}}{20}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:yb_intercluster}{{7}{20}{Mappa delle distanze inter-cluster (Yellowbrick). I centroidi sono proiettati in 2D; la dimensione dei cerchi è proporzionale al numero di pixel assegnati a ciascun cluster}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Proiezione PCA dei Cluster}{20}{subsection.7.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Proiezione PCA 2D dei cluster $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.3\hskip 1em\relax Proiezione PCA dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.4\hskip 1em\relax Proiezione PCA dei Cluster\nobreak  }\unhbox \z@ -Means{} con $K=6$. Le percentuali sugli assi indicano la varianza spiegata da ciascuna componente principale.}}{20}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:pca}{{8}{20}{Proiezione PCA 2D dei cluster \kmeans {} con $K=6$. Le percentuali sugli assi indicano la varianza spiegata da ciascuna componente principale}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mappatura Spaziale dei Cluster}{21}{subsection.7.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Mappatura spaziale dei cluster $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.4\hskip 1em\relax Mappatura Spaziale dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ -Means{} con $K{=}6$ sulla regione Capitanata. La coerenza geografica dei cluster conferma la validità pedologica dell'analisi.}}{21}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:mappa_kmeans}{{9}{21}{Mappatura spaziale dei cluster \kmeans {} con \kval {6} sulla regione Capitanata. La coerenza geografica dei cluster conferma la validità pedologica dell'analisi}{figure.caption.19}{}}
+\newlabel{fig:mappa_dbscan}{{10a}{21}{DBSCAN ($\varepsilon =1.9$, \texttt {min\_samples}=26)}{figure.caption.20}{}}
+\newlabel{sub@fig:mappa_dbscan}{{a}{21}{DBSCAN ($\varepsilon =1.9$, \texttt {min\_samples}=26)}{figure.caption.20}{}}
+\newlabel{fig:mappa_bisecting}{{10b}{21}{Bisecting \kmeans {} ($K=6$, colori allineati)}{figure.caption.20}{}}
+\newlabel{sub@fig:mappa_bisecting}{{b}{21}{Bisecting \kmeans {} ($K=6$, colori allineati)}{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Confronto delle mappature spaziali per DBSCAN e Bisecting $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {7.4\hskip 1em\relax Mappatura Spaziale dei Cluster-}\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {7.5\hskip 1em\relax Mappatura Spaziale dei Cluster\nobreak  }\unhbox \z@ -Means{}.}}{21}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:mappe_alt}{{10}{21}{Confronto delle mappature spaziali per DBSCAN e Bisecting \kmeans {}}{figure.caption.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Risultati del GMM (Expectation-Maximization)}{22}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.1}Selezione del Modello: BIC e AIC}{22}{subsubsection.7.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Curve BIC e AIC per il GMM al variare del numero di componenti. La linea tratteggiata rossa indica $K=6$.}}{22}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:bic_aic}{{11}{22}{Curve BIC e AIC per il GMM al variare del numero di componenti. La linea tratteggiata rossa indica $K=6$}{figure.caption.21}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.2}Mappatura Spaziale GMM}{22}{subsubsection.7.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Mappatura spaziale dei cluster GMM con $K{=}6$. L'assegnazione è basata sulla componente gaussiana con probabilità a posteriori massima (\emph  {hard assignment}). Le etichette sono allineate al $K$\unhbox \voidb@x \toks@ \@emptytoks \def 1{\toks@ {--}\futurelet \@let@token \setbox \z@ \hbox {-\nobreak  }\unhbox \z@ }\def \setbox \z@ \hbox {-\nobreak  }\unhbox \z@ {\setbox \z@ \hbox {-\nobreak  }\unhbox \z@ }\futurelet \@let@token \setbox \z@ \hbox {-\nobreak  }\unhbox \z@ -Means{} per confronto diretto.}}{23}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:mappa_gmm}{{12}{23}{Mappatura spaziale dei cluster GMM con \kval {6}. L'assegnazione è basata sulla componente gaussiana con probabilità a posteriori massima (\emph {hard assignment}). Le etichette sono allineate al \kmeans {} per confronto diretto}{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Profilazione dei Cluster}{23}{subsection.7.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Profilo agronomico dei 6 cluster basato sugli Z-score dei centroidi. Valori positivi (rossi) indicano gradienti superiori alla media regionale; valori negativi (blu) indicano gradienti inferiori.}}{24}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:profili}{{13}{24}{Profilo agronomico dei 6 cluster basato sugli Z-score dei centroidi. Valori positivi (rossi) indicano gradienti superiori alla media regionale; valori negativi (blu) indicano gradienti inferiori}{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Validazione e Confronto dei Modelli}{24}{subsection.7.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Confronto delle metriche di validazione interna ($N = 89\,786$ pixel validi).}}{24}{table.caption.24}\protected@file@percent }
+\newlabel{tab:validazione}{{5}{24}{Confronto delle metriche di validazione interna ($N = 89\,786$ pixel validi)}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.1}Concordanza tra Algoritmi: ARI e NMI}{24}{subsubsection.7.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Concordanza tra le partizioni dei diversi algoritmi.}}{25}{table.caption.25}\protected@file@percent }
+\newlabel{tab:concordanza}{{6}{25}{Concordanza tra le partizioni dei diversi algoritmi}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Efficienza Computazionale: K-Means vs Mini-Batch K-Means}{25}{subsection.7.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Confronto efficienza su 89\,786 pixel della Capitanata.}}{25}{table.caption.26}\protected@file@percent }
+\newlabel{tab:efficienza}{{7}{25}{Confronto efficienza su 89\,786 pixel della Capitanata}{table.caption.26}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Discussione e Conclusioni}{25}{section.8}\protected@file@percent }
+\newlabel{sec:conclusioni}{{8}{25}{Discussione e Conclusioni}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Sintesi dei Risultati}{25}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Limiti dello Studio}{26}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Sviluppi Futuri}{27}{subsection.8.3}\protected@file@percent }
+\gdef \@abspage@last{28}

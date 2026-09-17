@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.5.30)  8 SEP 2026 16:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.5.30)  17 SEP 2026 19:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -655,7 +655,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.39 ...filazione dei Cluster}{18}{subsection.7.5}
+l.42 ...ctation-Maximization)}{22}{subsection.7.5}
                                                   % [1])
 \tf@toc=\write4
 \openout4 = `relazione.toc'.
@@ -679,7 +679,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 [3{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/t
 exlive/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-07.
+13.
 
 (/usr/share/texlive/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -693,9 +693,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [4]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 268.
+nput line 275.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 269.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 276.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -706,17 +706,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [5]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 3
-07.
+14.
  (/usr/share/texlive/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<./figure/distribuzioni_eda.png, id=278, 999.4941pt x 1071.7641pt>
-File: ./figure/distribuzioni_eda.png Graphic file (type png)
-<use ./figure/distribuzioni_eda.png>
-Package pdftex.def Info: ./figure/distribuzioni_eda.png  used on input line 348
-.
-(pdftex.def)             Requested size: 455.24411pt x 488.1604pt.
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -726,6 +719,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [6{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texl
 ive/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+<./figure/distribuzioni_eda.png, id=307, 1004.19165pt x 1076.46165pt>
+File: ./figure/distribuzioni_eda.png Graphic file (type png)
+<use ./figure/distribuzioni_eda.png>
+Package pdftex.def Info: ./figure/distribuzioni_eda.png  used on input line 355
+.
+(pdftex.def)             Requested size: 455.24411pt x 488.00044pt.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -733,13 +733,21 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[7 <./figure/distribuzioni_eda.png>]
-<./figure/matrice_correlazione.png, id=298, 802.9197pt x 711.1368pt>
+[7]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[8 <./figure/distribuzioni_eda.png>]
+<./figure/matrice_correlazione.png, id=323, 812.67615pt x 714.38895pt>
 File: ./figure/matrice_correlazione.png Graphic file (type png)
 <use ./figure/matrice_correlazione.png>
 Package pdftex.def Info: ./figure/matrice_correlazione.png  used on input line 
-375.
-(pdftex.def)             Requested size: 386.96027pt x 342.73071pt.
+382.
+(pdftex.def)             Requested size: 386.96027pt x 340.16672pt.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -748,176 +756,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[8 <./figure/matrice_correlazione.png>]
+[9 <./figure/matrice_correlazione.png>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 462.
+(Font)              <10.95> on input line 471.
 
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[9]
-<./figure/corr_delta_macro.png, id=318, 544.9158pt x 422.0568pt>
-File: ./figure/corr_delta_macro.png Graphic file (type png)
-<use ./figure/corr_delta_macro.png>
-Package pdftex.def Info: ./figure/corr_delta_macro.png  used on input line 510.
-
-(pdftex.def)             Requested size: 318.66948pt x 246.82172pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[10]
-<./figure/corr_topsoil.png, id=325, 552.8655pt x 422.0568pt>
-File: ./figure/corr_topsoil.png Graphic file (type png)
-<use ./figure/corr_topsoil.png>
-Package pdftex.def Info: ./figure/corr_topsoil.png  used on input line 519.
-(pdftex.def)             Requested size: 218.51521pt x 166.81042pt.
-<./figure/corr_deep.png, id=326, 554.3109pt x 422.0568pt>
-File: ./figure/corr_deep.png Graphic file (type png)
-<use ./figure/corr_deep.png>
-Package pdftex.def Info: ./figure/corr_deep.png  used on input line 526.
-(pdftex.def)             Requested size: 218.51521pt x 166.37894pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[11 <./figure/corr_delta_macro.png> <./figure/corr_topsoil.png> <./figure/corr_
-deep.png>]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[12{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
-<./figure/knn_distance.png, id=351, 489.9906pt x 341.1144pt>
-File: ./figure/knn_distance.png Graphic file (type png)
-<use ./figure/knn_distance.png>
-Package pdftex.def Info: ./figure/knn_distance.png  used on input line 657.
-(pdftex.def)             Requested size: 295.90588pt x 206.00787pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[13]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[14 <./figure/knn_distance.png>]
-<./figure/elbow_curve.png, id=381, 665.6067pt x 396.7623pt>
-File: ./figure/elbow_curve.png Graphic file (type png)
-<use ./figure/elbow_curve.png>
-Package pdftex.def Info: ./figure/elbow_curve.png  used on input line 740.
-(pdftex.def)             Requested size: 218.51521pt x 130.25389pt.
-<./figure/silhouette_curve.png, id=382, 608.5134pt x 396.7623pt>
-File: ./figure/silhouette_curve.png Graphic file (type png)
-<use ./figure/silhouette_curve.png>
-Package pdftex.def Info: ./figure/silhouette_curve.png  used on input line 748.
-
-(pdftex.def)             Requested size: 218.51521pt x 142.47711pt.
-<./figure/optuna_history.png, id=383, 567.3195pt x 390.258pt>
-File: ./figure/optuna_history.png Graphic file (type png)
-<use ./figure/optuna_history.png>
-Package pdftex.def Info: ./figure/optuna_history.png  used on input line 761.
-(pdftex.def)             Requested size: 218.51521pt x 150.31232pt.
-<./figure/optuna_importance.png, id=384, 570.933pt x 390.258pt>
-File: ./figure/optuna_importance.png Graphic file (type png)
-<use ./figure/optuna_importance.png>
-Package pdftex.def Info: ./figure/optuna_importance.png  used on input line 768
-.
-(pdftex.def)             Requested size: 218.51521pt x 149.3655pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[15 <./figure/elbow_curve.png> <./figure/silhouette_curve.png>]
-<./figure/yb_intercluster.png, id=396, 596.2275pt x 497.9403pt>
-File: ./figure/yb_intercluster.png Graphic file (type png)
-<use ./figure/yb_intercluster.png>
-Package pdftex.def Info: ./figure/yb_intercluster.png  used on input line 783.
-(pdftex.def)             Requested size: 295.90588pt x 247.12323pt.
-<./figure/pca_clusters.png, id=398, 862.9038pt x 570.933pt>
-File: ./figure/pca_clusters.png Graphic file (type png)
-<use ./figure/pca_clusters.png>
-Package pdftex.def Info: ./figure/pca_clusters.png  used on input line 795.
-(pdftex.def)             Requested size: 341.43307pt x 225.91245pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[16 <./figure/optuna_history.png> <./figure/optuna_importance.png> <./figure/yb
-_intercluster.png>]
-<./figure/mappa_kmeans.png, id=410, 668.4975pt x 570.2103pt>
-File: ./figure/mappa_kmeans.png Graphic file (type png)
-<use ./figure/mappa_kmeans.png>
-Package pdftex.def Info: ./figure/mappa_kmeans.png  used on input line 810.
-(pdftex.def)             Requested size: 364.19667pt x 310.6584pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[17 <./figure/pca_clusters.png>]
-<./figure/mappa_dbscan.png, id=417, 674.2791pt x 570.2103pt>
-File: ./figure/mappa_dbscan.png Graphic file (type png)
-<use ./figure/mappa_dbscan.png>
-Package pdftex.def Info: ./figure/mappa_dbscan.png  used on input line 820.
-(pdftex.def)             Requested size: 218.51521pt x 184.7854pt.
-<./figure/mappa_bisecting.png, id=418, 668.4975pt x 570.2103pt>
-File: ./figure/mappa_bisecting.png Graphic file (type png)
-<use ./figure/mappa_bisecting.png>
-Package pdftex.def Info: ./figure/mappa_bisecting.png  used on input line 827.
-(pdftex.def)             Requested size: 218.51521pt x 186.38634pt.
-<./figure/profili_cluster.png, id=420, 818.0964pt x 570.2103pt>
-File: ./figure/profili_cluster.png Graphic file (type png)
-<use ./figure/profili_cluster.png>
-Package pdftex.def Info: ./figure/profili_cluster.png  used on input line 845.
-(pdftex.def)             Requested size: 386.96027pt x 269.70421pt.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[18 <./figure/mappa_kmeans.png> <./figure/mappa_dbscan.png> <./figure/mappa_bis
-ecting.png>]
-Overfull \hbox (11.55998pt too wide) in paragraph at lines 876--876
-[]\T1/lmr/bx/n/14.4 Efficienza Com-pu-ta-zio-na-le: K-Means vs Mini-Batch K-Mea
-ns 
+Overfull \vbox (16.90395pt too high) detected at line 483
  []
 
 
@@ -927,7 +770,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[19 <./figure/profili_cluster.png>]
+[10]
+<./figure/corr_deep.png, id=351, 831.46635pt x 711.8595pt>
+File: ./figure/corr_deep.png Graphic file (type png)
+<use ./figure/corr_deep.png>
+Package pdftex.def Info: ./figure/corr_deep.png  used on input line 529.
+(pdftex.def)             Requested size: 386.96027pt x 331.30452pt.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -935,7 +784,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[20]
+[11]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -943,22 +792,236 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[21] (./relazione.aux)
+[12 <./figure/corr_deep.png>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[13{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
+<./figure/knn_distance.png, id=389, 570.57166pt x 353.4003pt>
+File: ./figure/knn_distance.png Graphic file (type png)
+<use ./figure/knn_distance.png>
+Package pdftex.def Info: ./figure/knn_distance.png  used on input line 679.
+(pdftex.def)             Requested size: 295.90588pt x 183.27849pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[14]
+Overfull \hbox (14.78911pt too wide) in paragraph at lines 720--722
+[]\T1/lmr/m/n/12 I pa-ra-me-tri ven-go-no sti-ma-ti me-dian-te l'al-go-rit-mo i
+te-ra-ti-vo \T1/lmr/bx/n/12 Expectation-Maximization
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[15 <./figure/knn_distance.png>]
+Overfull \hbox (7.8058pt too wide) in paragraph at lines 748--750
+[]\T1/lmr/m/n/12 L'iterazione pro-se-gue fi-no a con-ver-gen-za del-la log-vero
+simiglianza. Ri-spet-to al $\OML/lmm/m/it/12 K$\T1/lmr/m/n/12 -Means,
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[16]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 867.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 867.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 867.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[17]
+<./figure/elbow_curve.png, id=442, 931.92165pt x 642.84164pt>
+File: ./figure/elbow_curve.png Graphic file (type png)
+<use ./figure/elbow_curve.png>
+Package pdftex.def Info: ./figure/elbow_curve.png  used on input line 874.
+(pdftex.def)             Requested size: 455.24411pt x 314.02408pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[18 <./figure/elbow_curve.png>]
+<./figure/silhouette_curve.png, id=452, 715.11165pt x 426.03165pt>
+File: ./figure/silhouette_curve.png Graphic file (type png)
+<use ./figure/silhouette_curve.png>
+Package pdftex.def Info: ./figure/silhouette_curve.png  used on input line 903.
+
+(pdftex.def)             Requested size: 295.90588pt x 176.28629pt.
+<./figure/yb_intercluster.png, id=453, 715.11165pt x 570.57166pt>
+File: ./figure/yb_intercluster.png Graphic file (type png)
+<use ./figure/yb_intercluster.png>
+Package pdftex.def Info: ./figure/yb_intercluster.png  used on input line 912.
+(pdftex.def)             Requested size: 295.90588pt x 236.09503pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[19 <./figure/silhouette_curve.png>]
+<./figure/pca_clusters.png, id=464, 862.1811pt x 570.57166pt>
+File: ./figure/pca_clusters.png Graphic file (type png)
+<use ./figure/pca_clusters.png>
+Package pdftex.def Info: ./figure/pca_clusters.png  used on input line 929.
+(pdftex.def)             Requested size: 341.43307pt x 225.95229pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[20 <./figure/yb_intercluster.png> <./figure/pca_clusters.png>]
+<./figure/mappa_kmeans.png, id=475, 668.85886pt x 569.84895pt>
+File: ./figure/mappa_kmeans.png Graphic file (type png)
+<use ./figure/mappa_kmeans.png>
+Package pdftex.def Info: ./figure/mappa_kmeans.png  used on input line 945.
+(pdftex.def)             Requested size: 364.19667pt x 310.28763pt.
+<./figure/mappa_dbscan.png, id=476, 677.1699pt x 569.84895pt>
+File: ./figure/mappa_dbscan.png Graphic file (type png)
+<use ./figure/mappa_dbscan.png>
+Package pdftex.def Info: ./figure/mappa_dbscan.png  used on input line 955.
+(pdftex.def)             Requested size: 218.51521pt x 183.88574pt.
+<./figure/mappa_bisecting.png, id=477, 668.85886pt x 569.84895pt>
+File: ./figure/mappa_bisecting.png Graphic file (type png)
+<use ./figure/mappa_bisecting.png>
+Package pdftex.def Info: ./figure/mappa_bisecting.png  used on input line 962.
+(pdftex.def)             Requested size: 218.51521pt x 186.16388pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[21 <./figure/mappa_kmeans.png> <./figure/mappa_dbscan.png> <./figure/mappa_bis
+ecting.png>]
+<./figure/bic_aic_gmm.png, id=488, 715.473pt x 426.03165pt>
+File: ./figure/bic_aic_gmm.png Graphic file (type png)
+<use ./figure/bic_aic_gmm.png>
+Package pdftex.def Info: ./figure/bic_aic_gmm.png  used on input line 984.
+(pdftex.def)             Requested size: 318.66948pt x 189.74925pt.
+<./figure/mappa_gmm.png, id=490, 668.85886pt x 569.84895pt>
+File: ./figure/mappa_gmm.png Graphic file (type png)
+<use ./figure/mappa_gmm.png>
+Package pdftex.def Info: ./figure/mappa_gmm.png  used on input line 1001.
+(pdftex.def)             Requested size: 364.19667pt x 310.28763pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[22 <./figure/bic_aic_gmm.png>]
+<./figure/profili_cluster.png, id=499, 828.57555pt x 569.84895pt>
+File: ./figure/profili_cluster.png Graphic file (type png)
+<use ./figure/profili_cluster.png>
+Package pdftex.def Info: ./figure/profili_cluster.png  used on input line 1021.
+
+(pdftex.def)             Requested size: 386.96027pt x 266.13348pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[23 <./figure/mappa_gmm.png>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[24 <./figure/profili_cluster.png>]
+Overfull \hbox (11.55998pt too wide) in paragraph at lines 1090--1090
+[]\T1/lmr/bx/n/14.4 Efficienza Com-pu-ta-zio-na-le: K-Means vs Mini-Batch K-Mea
+ns 
+ []
+
+
+Overfull \hbox (0.84337pt too wide) in paragraph at lines 1116--1120
+[]\T1/lmr/m/n/12 Il Mini-Batch $\OML/lmm/m/it/12 K$\T1/lmr/m/n/12 -Means ha di-
+mo-stra-to un'ac-ce-le-ra-zio-ne di cir-ca $\OT1/lmr/m/n/12 3\OMS/lmsy/m/n/12 ^
+^B$ \T1/lmr/m/n/12 ri-spet-to al $\OML/lmm/m/it/12 K$\T1/lmr/m/n/12 -Means
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[25]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[26]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[27] (./relazione.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
  ***********
 Package rerunfilecheck Info: File `relazione.out' has not changed.
-(rerunfilecheck)             Checksum: 8BA277AA047B26DE4FD0B08A94963C05;7909.
+(rerunfilecheck)             Checksum: 801EAEC6FA91876EAC33885BEFB2E514;9007.
  ) 
 Here is how much of TeX's memory you used:
- 16785 strings out of 467356
- 262820 string characters out of 5418691
- 1039136 words of memory out of 6000000
- 45490 multiletter control sequences out of 15000+600000
- 711067 words of font info for 95 fonts, out of 8000000 for 9000
+ 16850 strings out of 467356
+ 263148 string characters out of 5418691
+ 998137 words of memory out of 6000000
+ 45504 multiletter control sequences out of 15000+600000
+ 731919 words of font info for 113 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,846b,2071s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,79p,845b,2194s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/t
 exlive/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/public/lm/lmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
@@ -973,15 +1036,16 @@ mf-dist/fonts/type1/public/lm/lmr6.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/lm/lmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmri
 10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/sh
 are/texlive/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/lm/lmtk10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/l
-mtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmtt12.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on relazione.pdf (22 pages, 1549309 bytes).
+mf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/lm/lmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lm
+tk10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/lm/lmtt12.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on relazione.pdf (28 pages, 3726895 bytes).
 PDF statistics:
- 600 PDF objects out of 1000 (max. 8388607)
- 487 compressed objects within 5 object streams
- 141 named destinations out of 1000 (max. 500000)
- 409 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 697 PDF objects out of 1000 (max. 8388607)
+ 579 compressed objects within 6 object streams
+ 182 named destinations out of 1000 (max. 500000)
+ 431 words of extra memory for PDF output out of 10000 (max. 10000000)
 

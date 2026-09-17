@@ -137,20 +137,23 @@ per la caratterizzazione pedologica dei suoli della regione Capitanata
 delle proprietà chimico-fisiche del suolo.
 
 A partire dai dati geospaziali SoilGrids, sono state ingegnerizzate
-feature che descrivono le \emph{dinamiche verticali} del profilo
+13 feature che descrivono le \emph{dinamiche verticali} del profilo
 pedologico: tassi di variazione normalizzati
 (gradienti) tra i sei strati di profondità standard (0--200\,cm).
 
 Quattro algoritmi di clustering sono stati addestrati e confrontati:
-\textbf{\kmeans{}} (con ricerca iperparametri tramite Optuna,
-GridSearchCV e Metodo del Gomito), \textbf{DBSCAN}, \textbf{Bisecting
-\kmeans{}} e \textbf{Gaussian Mixture Model (GMM)}, quest'ultimo basato
+\textbf{\kmeans{}} (con ricerca iperparametri tramite Metodo del Gomito,
+Silhouette Score, Davies-Bouldin e Calinski-Harabasz),
+\textbf{DBSCAN}, \textbf{Bisecting \kmeans{}} e
+\textbf{Gaussian Mixture Model (GMM)}, quest'ultimo basato
 sull'algoritmo Expectation-Maximization (EM) che generalizza il \kmeans{}
 in ambito probabilistico. La validazione è stata condotta mediante
-Coefficiente di Silhouette e Sum of Squared Error (SSE). Un confronto di
-efficienza tra \kmeans{} standard e Mini-Batch \kmeans{} completa l'analisi.
+Coefficiente di Silhouette, Sum of Squared Error (SSE),
+Adjusted Rand Index (ARI) e Normalized Mutual Information (NMI).
+Un confronto di efficienza tra \kmeans{} standard e Mini-Batch \kmeans{}
+completa l'analisi.
 
-I risultati mostrano che il \kmeans{} con \kval{5} produce la migliore
+I risultati mostrano che il \kmeans{} con \kval{6} produce la migliore
 separazione spaziale e agronomica dei cluster, identificando tipologie
 di suolo con dinamiche verticali distinte e coerenti con la geomorfologia
 del territorio.
@@ -394,23 +397,8 @@ evidenziato le relazioni attese tra le variabili:
 Un clustering basato sulle sole variabili superficiali cattura solo
 un'istantanea bidimensionale del suolo. Per cogliere la complessità del
 profilo pedologico, è necessario descrivere \emph{come} le proprietà
-cambiano con la profondità. A tal fine, sono state ingegnerizzate due
-tipologie di feature verticali.
-
-\subsection{Delta Totale}
-
-Il \textbf{delta totale} misura la variazione netta tra il fondo
-(100--200\,cm) e la superficie (0--5\,cm) del profilo:
-
-\begin{equation}
-    \Delta_{\text{tot}}^{(v)} = X^{(v)}_{100\text{-}200} -
-    X^{(v)}_{0\text{-}5}
-    \label{eq:delta}
-\end{equation}
-
-dove $v$ indica la variabile pedologica. Un $\Delta_{\text{tot}}$
-positivo per l'argilla, ad esempio, indica un accumulo in profondità
-tipico di suoli con orizzonte argillico (Bt).
+cambiano con la profondità. A tal fine, sono stati calcolati i
+\textbf{gradienti normalizzati} tra strati consecutivi.
 
 \subsection{Gradienti Normalizzati}
 
@@ -452,10 +440,23 @@ il gradiente tra 60--100\,cm e 100--200\,cm (distanza di 70\,cm tra i
 centri) non sarebbe comparabile con quello tra 0--5\,cm e 5--15\,cm
 (distanza di 7.5\,cm).
 
-\subsection{Selezione delle 15 Feature Finali}
+\begin{lstlisting}[caption={Calcolo dei gradienti normalizzati tra strati consecutivi.},label={lst:gradient}]
+layer_midpoints = {
+    '0-5cm': 2.5, '5-15cm': 10.0, '15-30cm': 22.5,
+    '30-60cm': 45.0, '60-100cm': 80.0, '100-200cm': 150.0
+}
 
-Dopo il calcolo, sono state selezionate le feature suddivise
-in gruppi tematici (Tabella~\ref{tab:feature}). Oltre alle variabili
+def calc_gradient(da, l_top, l_bottom):
+    dz = layer_midpoints[l_bottom] - layer_midpoints[l_top]
+    return (da.sel(depth=l_bottom) - da.sel(depth=l_top)) / dz
+\end{lstlisting}
+
+\subsection{Selezione delle 13 Feature Finali}
+
+Dopo il calcolo, sono state selezionate 13 feature suddivise
+in sei gruppi tematici (Tabella~\ref{tab:feature}). Ogni gradiente
+è stato scelto per catturare una specifica dinamica pedologica lungo
+il profilo verticale. Oltre alle variabili
 pedologiche classiche, è stata inclusa la \textbf{conduttività idraulica
 saturata} (\texttt{Ksat}), già presente nel dataset NetCDF in quanto
 derivata mediante funzioni di pedotrasferimento a partire dalle
@@ -463,8 +464,8 @@ variabili tessiturali e idrologiche.
 
 \begin{table}[H]
     \centering
-    \caption{Feature selezionate per il clustering, raggruppate
-    per tipologia.}
+    \caption{Le 13 feature selezionate per il clustering, raggruppate
+    per tipologia pedologica.}
     \label{tab:feature}
     \small
     \begin{tabular}{@{}lll@{}}
@@ -501,47 +502,34 @@ variabili tessiturali e idrologiche.
 
 \subsection{Analisi di Correlazione delle Feature Ingegnerizzate}
 
-Le correlazioni tra le feature ingegnerizzate sono state analizzate
-separatamente per ciascun gruppo tematico. In particolare:
+Le correlazioni tra le 13 feature ingegnerizzate sono state analizzate
+mediante la matrice di correlazione di Pearson
+(Figura~\ref{fig:corr_gradienti}). Un controllo automatico ha verificato
+l'assenza di coppie con collinearità critica ($|r| > 0.8$), confermando
+che lo spazio delle feature è ben bilanciato e non richiede ulteriore
+riduzione dimensionale.
 
+Le correlazioni osservate confermano le attese pedologiche:
 \begin{itemize}
-    \item I \textbf{delta macro} confermano la correlazione attesa tra
-    CEC e SOC (la capacità di scambio cationico è legata alla materia
-    organica).
+    \item Correlazione \textbf{negativa} tra i gradienti di SOC e i
+    gradienti di BDOD: dove la sostanza organica cala rapidamente,
+    la densità apparente aumenta.
 
-    \item Le \textbf{transizioni superficiali} mostrano correlazione
-    negativa tra il gradiente SOC e il gradiente BDOD (dove la sostanza
-    organica cala, la densità aumenta).
+    \item Correlazione \textbf{negativa} tra i gradienti di argilla e
+    il gradiente di sabbia: la complementarietà tessiturale è preservata
+    anche nelle dinamiche verticali.
 
-    \item Le \textbf{dinamiche profonde} evidenziano il legame tra
-    accumulo di argilla e aumento della CEC in profondità.
+    \item I gradienti di Ksat riflettono indirettamente le dinamiche
+    tessiturali, con correlazioni coerenti rispetto ai gradienti di
+    argilla e BDOD.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{corr_delta_macro.png}
-    \caption{Matrice di correlazione dei delta totali (fondo --
-    superficie) per le 5 variabili principali.}
-    \label{fig:corr_delta}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{corr_topsoil.png}
-
-        \caption{Transizioni superficiali (0--30\,cm).}
-        \label{fig:corr_topsoil}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{corr_deep.png}
-
-        \caption{Dinamiche profonde (30--200\,cm).}
-        \label{fig:corr_deep}
-    \end{subfigure}
-    \caption{Correlazione dei gradienti normalizzati per zona di
-    profondità.}
+    \includegraphics[width=0.85\textwidth]{corr_deep.png}
+    \caption{Matrice di correlazione (triangolo inferiore) dei 13
+    gradienti verticali normalizzati. Nessuna coppia supera la soglia
+    critica $|r| > 0.8$.}
     \label{fig:corr_gradienti}
 \end{figure}
 
@@ -553,9 +541,8 @@ separatamente per ciascun gruppo tematico. In particolare:
 
 \subsection{Standardizzazione dei Dati}
 
-Le 15 feature selezionate presentano scale e deviazioni standard molto
-diverse (ad esempio, il pH varia tra 4 e 9, mentre la CEC può superare
-50\,cmol$_c$/kg). Per evitare che le variabili a scala maggiore dominino
+Le 13 feature selezionate presentano scale e deviazioni standard molto
+diverse. Per evitare che le variabili a scala maggiore dominino
 il calcolo delle distanze euclidee, è stato applicato uno
 \textbf{StandardScaler}:
 
@@ -571,7 +558,7 @@ standard della $j$-esima feature sul dataset completo.
 
 Per rendere computazionalmente fattibile la ricerca degli iperparametri
 (in particolare il calcolo del Coefficiente di Silhouette, che ha
-complessità $O(n^2)$), è stato estratto un campione casuale stratificato
+complessità $O(n^2)$), è stato estratto un campione casuale
 di \textbf{15\,000 pixel} dal dataset standardizzato.
 
 \subsection{Algoritmo 1: K-Means}
@@ -586,61 +573,82 @@ minimizzando la \textbf{Sum of Squared Errors} (SSE) intra-cluster:
 \end{equation}
 
 dove $\boldsymbol{\mu}_k$ è il centroide del cluster $C_k$.
+L'inizializzazione dei centroidi è stata effettuata con la strategia
+\textbf{k-means++}, che seleziona i centri iniziali in modo da
+massimizzare la distanza reciproca, garantendo una convergenza più
+rapida e stabile.
 
 \subsubsection{Ricerca del K Ottimale}
 
 La determinazione del numero ottimale di cluster è stata affrontata con
-quattro strategie complementari:
+quattro metriche complementari, calcolate per $K \in [2, 12]$:
 
 \begin{enumerate}
-    \item \textbf{Ottimizzazione Bayesiana (Optuna)}: ricerca nello
-    spazio degli iperparametri ($K \in [2, 12]$, \texttt{n\_init} $\in
-    \{10, 20\}$, \texttt{max\_iter} $\in [200, 500]$, \texttt{init}
-    $\in$ \{\texttt{k-means++}, \texttt{random}\}) per massimizzare il
-    Coefficiente di Silhouette, con 20 trial.
+    \item \textbf{Metodo del Gomito (Inerzia)}: la curva di inerzia
+    (SSE) al variare di $K$ viene analizzata con l'algoritmo
+    \texttt{KneeLocator} della libreria \texttt{kneed}, che individua
+    automaticamente il punto di flesso geometrico (``gomito'') nella
+    curva convessa decrescente.
 
-    \item \textbf{GridSearchCV}: esplorazione esaustiva con validazione
-    incrociata ``leave-all-in'' (split unico) su $K \in [2, 12]$.
+    \item \textbf{Coefficiente di Silhouette}: misura la coesione
+    intra-cluster e la separazione inter-cluster (cfr.\
+    Sezione~\ref{subsec:metriche}). Il $K$ con il valore massimo è
+    selezionato.
 
-    \item \textbf{Metodo del Gomito}: identificazione del punto di
-    flesso nella curva di inerzia mediante calcolo della distanza
-    massima dalla retta che congiunge i punti estremi.
+    \item \textbf{Indice di Davies-Bouldin (DB)}: valuta la somiglianza
+    tra cluster adiacenti. Definito come:
+    \begin{equation}
+        \text{DB} = \frac{1}{K} \sum_{k=1}^{K} \max_{j \neq k}
+        \left( \frac{s_k + s_j}{d_{kj}} \right)
+    \end{equation}
+    dove $s_k$ è la dispersione media del cluster $k$ e $d_{kj}$ la
+    distanza tra i centroidi $k$ e $j$. Un valore \textbf{più basso}
+    indica cluster meglio separati.
 
-    \item \textbf{Silhouette Standard}: massimizzazione del
-    Coefficiente di Silhouette al variare di $K$.
+    \item \textbf{Indice di Calinski-Harabasz (CH)}: rapporto tra la
+    dispersione inter-cluster e intra-cluster, pesato per i gradi di
+    libertà:
+    \begin{equation}
+        \text{CH} = \frac{\text{SSB} / (K-1)}{\text{SSW} / (n-K)}
+    \end{equation}
+    dove SSB è la varianza inter-cluster e SSW la varianza intra-cluster.
+    Un valore \textbf{più alto} indica cluster più compatti e separati.
 \end{enumerate}
 
-I risultati dei quattro metodi sono stati aggregati con un
-\textbf{sistema di voto a maggioranza}: il $K$ proposto più
-frequentemente viene adottato; in caso di parità, si sceglie la mediana
-dei candidati.
-
-\begin{lstlisting}[caption={Ricerca iperparametri con Optuna.},label={lst:optuna}]
-def objective(trial):
-    n_clusters = trial.suggest_int('n_clusters', 2, 12)
-    n_init = trial.suggest_categorical('n_init', [10, 20])
-    max_iter = trial.suggest_int('max_iter', 200, 500, step=100)
-    init = trial.suggest_categorical('init', ['k-means++', 'random'])
-
-    model = KMeans(n_clusters=n_clusters, n_init=n_init,
-                   max_iter=max_iter, init=init, random_state=42)
+\begin{lstlisting}[caption={Calcolo delle quattro metriche per la ricerca del K ottimale.},label={lst:metriche_k}]
+k_values = list(range(2, 13))
+for k in k_values:
+    model = KMeans(n_clusters=k, init="k-means++",
+                   n_init=10, max_iter=300, random_state=42)
     labels = model.fit_predict(X_search)
-    return silhouette_score(X_search, labels)
 
-study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=20)
+    inertia_values.append(model.inertia_)
+    silhouette_scores.append(silhouette_score(X_search, labels))
+    db_scores.append(davies_bouldin_score(X_search, labels))
+    ch_scores.append(calinski_harabasz_score(X_search, labels))
+
+# Individuazione automatica del gomito
+kneedle = KneeLocator(k_values, inertia_values,
+                       curve="convex", direction="decreasing",
+                       interp_method="polynomial")
+best_k_elbow = kneedle.elbow
 \end{lstlisting}
 
-\subsubsection{Forzatura Agronomica a K=5}
+\subsubsection{Scelta Finale: K=6}
 
-Sebbene metriche come la Silhouette tendano a favorire valori bassi di
-$K$ (ad esempio $K=2$), che producono una separazione binaria del
-territorio, da un punto di vista agronomico è opportuno cogliere
-sfumature più fini (ad esempio, distinguere tra argille reattive e
-inattive, o tra suoli con diverso grado di lisciviazione).
+I risultati delle quattro metriche (Tabella~\ref{tab:kottimale}) sono
+stati analizzati congiuntamente. Sebbene metriche come la Silhouette e
+il Davies-Bouldin tendano a favorire valori bassi di $K$ (ad esempio
+$K=2$), producendo una separazione binaria del territorio priva di
+sfumature agronomiche, il Metodo del Gomito ha indicato un punto di
+flesso coerente con $K=6$.
 
-Sulla base del Metodo del Gomito e di considerazioni pedologiche, il
-modello finale è stato addestrato con \kval{5}.
+La scelta finale di \kval{6} è stata guidata da un bilanciamento tra
+i criteri statistici e le considerazioni pedologiche di dominio:
+con sei cluster è possibile distinguere tipologie di suolo con
+dinamiche verticali distinte (ad esempio, suoli con forte lisciviazione
+argillosa vs.\ suoli con profilo uniforme, suoli con suola di
+lavorazione vs.\ suoli profondi organici).
 
 \subsection{Algoritmo 2: DBSCAN}
 
@@ -656,19 +664,22 @@ Due sono i parametri chiave:
     nucleo denso.
 \end{itemize}
 
-La determinazione di $\varepsilon$ è stata effettuata tramite il
-\textbf{grafico K-NN distance}: calcolando la distanza dal
-$k$-esimo vicino più prossimo (con $k =$ \texttt{min\_samples} $= 26$)
-e ordinando i valori in modo crescente, si individua il punto di
-ginocchio che segna il passaggio da ``densità intra-cluster'' a
-``distanza inter-cluster''. Il valore scelto è stato
+Il parametro \texttt{min\_samples} è stato fissato a 26
+($\approx 2 \times d$, con $d = 13$ il numero di feature), seguendo
+le linee guida per dati ad alta dimensionalità. La determinazione di
+$\varepsilon$ è stata effettuata tramite il \textbf{grafico K-NN
+distance}: calcolando la distanza dal $k$-esimo vicino più prossimo
+(con $k = 26$) e ordinando i valori in modo crescente, si individua
+il punto di ginocchio che segna il passaggio da ``densità
+intra-cluster'' a ``distanza inter-cluster''. Il valore scelto è stato
 $\varepsilon = 1.9$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{knn_distance.png}
     \caption{Grafico delle distanze K-NN per la determinazione
-    dell'epsilon ottimale del DBSCAN.}
+    dell'epsilon ottimale del DBSCAN. Il punto di ginocchio è stato
+    individuato nella regione $\varepsilon \approx 1.9$.}
     \label{fig:knn}
 \end{figure}
 
@@ -680,8 +691,14 @@ in due sotto-cluster fino a raggiungere il numero desiderato di partizioni.
 
 A ogni iterazione, il cluster con la varianza interna maggiore viene
 selezionato e bipartito con un \kmeans{} a $K=2$. Il processo è stato
-configurato con $K=5$ per garantire un confronto equo con il \kmeans{}
+configurato con $K=6$ per garantire un confronto equo con il \kmeans{}
 standard.
+
+Per rendere il confronto visivo immediato, le etichette dei cluster
+generati dal Bisecting \kmeans{} sono state \textbf{allineate} a quelle
+del \kmeans{} standard mediante l'algoritmo ungherese
+(\texttt{linear\_sum\_assignment} sulla matrice di confusione),
+minimizzando la discrepanza complessiva tra le due partizioni.
 
 \subsection{Algoritmo 4: Gaussian Mixture Model (EM)}
 \label{subsec:gmm}
@@ -758,27 +775,29 @@ penalizzano la complessità del modello, ma il BIC impone una penalità
 più severa, tendendo a preferire modelli più parsimoniosi.
 
 Il modello finale è stato configurato con \texttt{covariance\_type='full'}
-(matrice di covarianza completa per ogni componente) e $K=5$ per
+(matrice di covarianza completa per ogni componente) e $K=6$ per
 consentire un confronto equo con gli altri algoritmi.
 
 \subsection{Riduzione Dimensionale: PCA}
 
 Per la \textbf{visualizzazione} dei cluster nello spazio delle feature
-(15 dimensioni), è stata applicata un'analisi delle Componenti
+(13 dimensioni), è stata applicata un'analisi delle Componenti
 Principali (PCA) per proiettare i dati in 2D:
 
 \begin{equation}
     \mathbf{z}_i = \mathbf{W}^\top \tilde{\mathbf{x}}_i
 \end{equation}
 
-dove $\mathbf{W} \in \mathbb{R}^{15 \times 2}$ è la matrice delle prime
+dove $\mathbf{W} \in \mathbb{R}^{13 \times 2}$ è la matrice delle prime
 due componenti principali, calcolate come gli autovettori associati ai
 due autovalori maggiori della matrice di covarianza.
 
 \subsection{Metriche di Validazione}
+\label{subsec:metriche}
 
-La validazione dei modelli è stata condotta con due metriche interne
-(non richiedono etichette ground-truth):
+La validazione dei modelli è stata condotta con metriche sia interne
+(non richiedono etichette ground-truth) che relative (confronto tra
+partizioni).
 
 \paragraph{Coefficiente di Silhouette.} Per ogni campione $i$:
 
@@ -807,6 +826,14 @@ anziché l'SSE).
 guidata dal BIC e dall'AIC (cfr.\ Sezione~\ref{subsec:gmm}), che bilanciano
 bontà del fit e complessità.
 
+\paragraph{Adjusted Rand Index (ARI).} Misura la concordanza tra due
+partizioni, corretta per il caso. Assume valori in $[-1, 1]$: un ARI
+di 1 indica accordo perfetto, 0 indica concordanza casuale.
+
+\paragraph{Normalized Mutual Information (NMI).} Quantifica
+l'informazione condivisa tra due partizioni, normalizzata nell'intervallo
+$[0, 1]$. Valori elevati indicano forte accordo strutturale.
+
 
 % ══════════════════════════════════════════════════════════════════════════
 \section{Risultati Sperimentali}
@@ -815,88 +842,94 @@ bontà del fit e complessità.
 
 \subsection{Ricerca del K Ottimale}
 
-I risultati della ricerca iperparametri sono sintetizzati nella
-Tabella~\ref{tab:kottimale}.
+I risultati delle quattro metriche di validazione interna sono
+sintetizzati nella Tabella~\ref{tab:kottimale} e visualizzati nella
+Figura~\ref{fig:k_selection}.
 
 \begin{table}[H]
     \centering
     \caption{Riepilogo dei valori di $K$ suggeriti dai quattro metodi.}
     \label{tab:kottimale}
-    \begin{tabular}{@{}lc@{}}
+    \begin{tabular}{@{}llc@{}}
         \toprule
-        \textbf{Metodo} & \textbf{K suggerito} \\
+        \textbf{Metodo / Metrica} & \textbf{Criterio} & \textbf{K suggerito} \\
         \midrule
-        Silhouette Standard & 2 \\
-        Metodo del Gomito    & 5 \\
-        GridSearchCV         & 2 \\
-        Optuna               & 2 \\
+        Metodo del Gomito (KneeLocator) & Punto di flesso & 6 \\
+        Silhouette Score               & Massimo         & 2 \\
+        Davies-Bouldin                  & Minimo          & 11 \\
+        Calinski-Harabasz               & Massimo         & 2 \\
         \midrule
-        \textbf{K finale (voto)} & \textbf{5} \\
+        \textbf{K finale (dominio)} & \textbf{Agronomico} & \textbf{6} \\
         \bottomrule
     \end{tabular}
+
+    \vspace{4pt}
+    {\footnotesize Il Metodo del Gomito conferma $K=6$ come punto di flesso;
+    le metriche Silhouette e CH favoriscono $K=2$ (separazione binaria),
+    mentre il DB suggerisce $K=11$ (frammentazione eccessiva).}
 \end{table}
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{elbow_curve.png}
-        % \includegraphics[width=\textwidth]{yb_elbow.png}
-
-        \caption{Curva del gomito (Inerzia vs $K$).}
-        \label{fig:elbow}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{silhouette_curve.png}
-        % \includegraphics[width=\textwidth]{yb_silhouette.png}
-
-        \caption{Coefficiente di Silhouette vs $K$.}
-        \label{fig:sil_curve}
-    \end{subfigure}
-    \caption{Metriche per la selezione del $K$ ottimale.}
+    \includegraphics[width=\textwidth]{elbow_curve.png}
+    \caption{Le quattro metriche per la selezione del $K$ ottimale:
+    Curva del Gomito (Inerzia), Coefficiente di Silhouette,
+    Indice di Davies-Bouldin e Indice di Calinski-Harabasz.
+    La linea tratteggiata rossa indica $K=6$.}
     \label{fig:k_selection}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{optuna_history.png}
-
-        \caption{Storia dell'ottimizzazione Optuna.}
-        \label{fig:optuna_hist}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{optuna_importance.png}
-
-        \caption{Importanza degli iperparametri (Optuna).}
-        \label{fig:optuna_imp}
-    \end{subfigure}
-    \caption{Analisi dell'ottimizzazione bayesiana con Optuna.}
-    \label{fig:optuna}
 \end{figure}
 
 \subsection{Visualizzazione Avanzata con Yellowbrick}
 
-La libreria Yellowbrick ha fornito tre visualizzazioni diagnostiche:
+La libreria Yellowbrick ha fornito tre visualizzazioni diagnostiche
+complementari che confermano la validità della partizione scelta:
+
+\begin{enumerate}
+    \item \textbf{KElbowVisualizer}: individuazione automatica del punto
+    di gomito con indicatore visivo.
+
+    \item \textbf{SilhouetteVisualizer}: profilo di silhouette per $K=6$,
+    che mostra la densità e l'eventuale sbilanciamento dei cluster. Ogni
+    ``lama'' del grafico rappresenta un cluster: la larghezza indica la
+    dimensione, l'estensione orizzontale la coesione interna.
+
+    \item \textbf{InterclusterDistance}: proiezione 2D dei centroidi con
+    cerchi proporzionali alla dimensione dei cluster, per valutare la
+    sovrapposizione spaziale.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{silhouette_curve.png}
+    \caption{Profilo Silhouette per $K=6$ (Yellowbrick). Ogni ``lama''
+    rappresenta un cluster: la coesione interna è indicata dall'ampiezza
+    orizzontale, la linea tratteggiata verticale segna la media globale.}
+    \label{fig:yb_silhouette}
+\end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{yb_intercluster.png}
-    \caption{Distanza inter-cluster (Yellowbrick) per la validazione del clustering.}
-    \label{fig:yellowbrick}
+    \caption{Mappa delle distanze inter-cluster (Yellowbrick). I centroidi
+    sono proiettati in 2D; la dimensione dei cerchi è proporzionale al
+    numero di pixel assegnati a ciascun cluster.}
+    \label{fig:yb_intercluster}
 \end{figure}
 
 \subsection{Proiezione PCA dei Cluster}
 
 La Figura~\ref{fig:pca} mostra la proiezione dei cluster nello spazio
-delle prime due componenti principali.
+delle prime due componenti principali. La separazione visiva dei cluster
+conferma che le feature ingegnerizzate catturano strutture significative
+nei dati, anche se la sovrapposizione parziale è attesa dato che la PCA
+a due componenti comprime 13 dimensioni.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{pca_clusters.png}
-    \caption{Proiezione PCA 2D dei cluster \kmeans{}. Le percentuali
-    sugli assi indicano la varianza spiegata da ciascuna componente.}
+    \caption{Proiezione PCA 2D dei cluster \kmeans{} con $K=6$. Le
+    percentuali sugli assi indicano la varianza spiegata da ciascuna
+    componente principale.}
     \label{fig:pca}
 \end{figure}
 
@@ -905,12 +938,12 @@ delle prime due componenti principali.
 Nonostante l'algoritmo non abbia ricevuto informazioni spaziali
 (coordinate geografiche), i cluster assumono una distribuzione
 geografica coerente con la geomorfologia della Capitanata
-(Figura~\ref{fig:mappa_kmeans}).
+(Figure~\ref{fig:mappa_kmeans}--\ref{fig:mappe_alt}).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{mappa_kmeans.png}
-    \caption{Mappatura spaziale dei cluster \kmeans{} con \kval{5}
+    \caption{Mappatura spaziale dei cluster \kmeans{} con \kval{6}
     sulla regione Capitanata. La coerenza geografica dei cluster
     conferma la validità pedologica dell'analisi.}
     \label{fig:mappa_kmeans}
@@ -928,7 +961,7 @@ geografica coerente con la geomorfologia della Capitanata
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{mappa_bisecting.png}
 
-        \caption{Bisecting \kmeans{} ($K=5$).}
+        \caption{Bisecting \kmeans{} ($K=6$, colori allineati).}
         \label{fig:mappa_bisecting}
     \end{subfigure}
     \caption{Confronto delle mappature spaziali per DBSCAN e Bisecting
@@ -941,15 +974,16 @@ geografica coerente con la geomorfologia della Capitanata
 \subsubsection{Selezione del Modello: BIC e AIC}
 
 La Figura~\ref{fig:bic_aic} mostra l'andamento di BIC e AIC al variare
-del numero di componenti gaussiane. Entrambi i criteri decrescono
-all'aumentare di $K$, con un rallentamento della discesa intorno a
-$K=5$, confermando la scelta del modello a 5 componenti.
+del numero di componenti gaussiane ($K \in [2, 12]$). Entrambi i criteri
+decrescono all'aumentare di $K$, con un rallentamento della discesa
+intorno a $K=6$, confermando la ragionevolezza della scelta del modello
+a 6 componenti.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{bic_aic_gmm.png}
     \caption{Curve BIC e AIC per il GMM al variare del numero di
-    componenti. La linea tratteggiata rossa indica $K=5$.}
+    componenti. La linea tratteggiata rossa indica $K=6$.}
     \label{fig:bic_aic}
 \end{figure}
 
@@ -965,9 +999,10 @@ di transizione pedologica.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{mappa_gmm.png}
-    \caption{Mappatura spaziale dei cluster GMM con \kval{5}.
+    \caption{Mappatura spaziale dei cluster GMM con \kval{6}.
     L'assegnazione è basata sulla componente gaussiana con
-    probabilità a posteriori massima (\emph{hard assignment}).}
+    probabilità a posteriori massima (\emph{hard assignment}).
+    Le etichette sono allineate al \kmeans{} per confronto diretto.}
     \label{fig:mappa_gmm}
 \end{figure}
 
@@ -975,12 +1010,16 @@ di transizione pedologica.
 
 La heatmap dei centroidi standardizzati (Z-score) permette di
 interpretare il ``profilo agronomico'' di ciascun cluster
-(Figura~\ref{fig:profili}).
+(Figura~\ref{fig:profili}). Valori fortemente positivi (rossi) indicano
+che il gradiente di una determinata variabile è nettamente superiore
+alla media regionale; valori negativi (blu) indicano il comportamento
+opposto. Questa rappresentazione consente di associare a ciascun cluster
+una descrizione pedologica qualitativa.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{profili_cluster.png}
-    \caption{Profilo agronomico dei cluster basato sugli Z-score dei
+    \caption{Profilo agronomico dei 6 cluster basato sugli Z-score dei
     centroidi. Valori positivi (rossi) indicano gradienti superiori alla
     media regionale; valori negativi (blu) indicano gradienti inferiori.}
     \label{fig:profili}
@@ -1002,17 +1041,51 @@ Silhouette è stato calcolato escludendo i punti di rumore
         \textbf{Algoritmo} & \textbf{Silhouette} ($\uparrow$) &
         \textbf{SSE / Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means ($K=5$)            & 0.1050  & 797\,772.04 \\
-        Bisecting K-Means ($K=5$)  & 0.0888  & 818\,668.38 \\
+        K-Means ($K=6$)            & 0.1041  & 762\,167 \\
+        Bisecting K-Means ($K=6$)  & 0.0739  & 793\,841 \\
         DBSCAN ($\varepsilon=1.9$) & 0.0869$^*$  & N/A \\
-        GMM / EM ($K=5$)           & 0.0692  & N/A$^\dagger$ \\
+        GMM / EM ($K=6$)           & 0.0658  & N/A$^\dagger$ \\
         \bottomrule
     \end{tabular}
 
     \vspace{4pt}
     {\footnotesize $^*$Calcolato escludendo i 5\,570 pixel (6.20\%) classificati come rumore ($-1$).}\\
-    {\footnotesize $^\dagger$Il GMM ottimizza la log-verosimiglianza (BIC = 2\,792\,738, AIC = 2\,787\,810), non l'SSE.}
+    {\footnotesize $^\dagger$Il GMM ottimizza la log-verosimiglianza (BIC $= 2\,781\,079$, AIC $= 2\,775\,163$), non l'SSE.}
 \end{table}
+
+\subsubsection{Concordanza tra Algoritmi: ARI e NMI}
+
+Per quantificare la concordanza strutturale tra le partizioni prodotte
+dai diversi algoritmi, sono stati calcolati l'Adjusted Rand Index (ARI)
+e la Normalized Mutual Information (NMI)
+(Tabella~\ref{tab:concordanza}).
+
+\begin{table}[H]
+    \centering
+    \caption{Concordanza tra le partizioni dei diversi algoritmi.}
+    \label{tab:concordanza}
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Confronto} & \textbf{ARI} & \textbf{NMI} \\
+        \midrule
+        K-Means vs Bisecting K-Means & 0.458 & -- \\
+        K-Means vs GMM (EM)          & 0.387 & 0.462 \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{4pt}
+    {\footnotesize ARI = 1 indica accordo perfetto; NMI = 1 indica massima
+    informazione condivisa.}
+\end{table}
+
+Un ARI di 0.458 tra \kmeans{} e Bisecting \kmeans{} indica una
+concordanza moderata tra le due strategie di partizionamento: le
+partizioni condividono buona parte della struttura, ma l'approccio
+divisivo top-down produce differenze nella gerarchia di suddivisione.
+La concordanza con il GMM (ARI $= 0.387$, NMI $= 0.462$) conferma
+che l'assegnazione probabilistica è coerente con quella deterministica,
+pur con differenze significative nelle zone di transizione pedologica
+(15.3\% dei pixel con probabilità $< 70\%$).
 
 \subsection{Efficienza Computazionale: K-Means vs Mini-Batch K-Means}
 
@@ -1027,18 +1100,24 @@ addestramento con un trade-off minimo in termini di inerzia.
 
 \begin{table}[H]
     \centering
-    \caption{Confronto efficienza su 89\,786 pixel validi della Capitanata.}
+    \caption{Confronto efficienza su 89\,786 pixel della Capitanata.}
     \label{tab:efficienza}
     \begin{tabular}{@{}lcc@{}}
         \toprule
         \textbf{Algoritmo} & \textbf{Tempo (s)} ($\downarrow$) &
         \textbf{Inerzia} ($\downarrow$) \\
         \midrule
-        K-Means Standard     & 0.472 & 797\,772.53 \\
-        Mini-Batch K-Means   & 0.136 & 814\,878.06 \\
+        K-Means Standard     & 0.437 & 762\,167 \\
+        Mini-Batch K-Means   & 0.141 & 780\,138 \\
         \bottomrule
     \end{tabular}
 \end{table}
+
+Il Mini-Batch \kmeans{} ha dimostrato un'accelerazione di circa $3\times$
+rispetto al \kmeans{} standard, con un incremento dell'inerzia
+di circa il 2.4\% (da 762\,167 a 780\,138), confermando la sua idoneità
+per applicazioni geospaziali su larga scala.
+
 
 % ══════════════════════════════════════════════════════════════════════════
 \section{Discussione e Conclusioni}
@@ -1053,14 +1132,17 @@ catturando informazioni sulla struttura tridimensionale del profilo
 pedologico. I principali risultati sono:
 
 \begin{enumerate}
-    \item La \textbf{feature engineering} basata su
+    \item La \textbf{feature engineering} basata su 13
     gradienti normalizzati si è dimostrata efficace nel catturare le
     dinamiche verticali del suolo, producendo cluster con
-    interpretazione agronomica chiara.
+    interpretazione agronomica chiara. L'analisi di correlazione ha
+    confermato l'assenza di collinearità critica tra le feature.
 
-    \item Il \textbf{\kmeans{}} con \kval{5} ha prodotto la migliore
+    \item Il \textbf{\kmeans{}} con \kval{6} ha prodotto la migliore
     separazione spaziale, con cluster geograficamente coerenti con la
-    geomorfologia della Capitanata.
+    geomorfologia della Capitanata. La scelta di $K$ è stata supportata
+    dal Metodo del Gomito, dall'Indice di Davies-Bouldin e da
+    considerazioni agronomiche di dominio.
 
     \item Il \textbf{DBSCAN} ha classificato una porzione significativa
     di pixel come rumore, confermando che la distribuzione dei dati nello
@@ -1069,21 +1151,24 @@ pedologico. I principali risultati sono:
     (scenario favorevole al \kmeans{}).
 
     \item Il \textbf{Bisecting \kmeans{}} ha fornito risultati
-    comparabili al \kmeans{} standard, con una lieve differenza nella
-    gerarchia di suddivisione che potrebbe essere sfruttata per analisi
-    a risoluzione variabile.
+    con concordanza moderata rispetto al \kmeans{} standard
+    (ARI $= 0.458$), indicando che l'approccio divisivo top-down
+    converge verso una struttura simile ma non identica, con
+    differenze nella gerarchia di suddivisione.
 
     \item Il \textbf{GMM} (algoritmo EM) ha offerto un'assegnazione
     probabilistica dei pixel ai cluster, evidenziando le zone di
-    transizione pedologica con incertezza elevata. La selezione del
-    modello tramite BIC e AIC ha confermato la ragionevolezza della
-    scelta $K=5$. I cluster GMM mostrano una struttura spaziale
-    comparabile a quella del \kmeans{}, con confini leggermente più
-    sfumati dovuti alla natura ellissoidale delle componenti gaussiane.
+    transizione pedologica con incertezza elevata (pixel con probabilità
+    $< 70\%$). La selezione del modello tramite BIC e AIC ha confermato
+    la ragionevolezza della scelta $K=6$. I cluster GMM mostrano una
+    struttura spaziale comparabile a quella del \kmeans{}, con confini
+    leggermente più sfumati dovuti alla natura ellissoidale delle
+    componenti gaussiane.
 
     \item Il \textbf{Mini-Batch \kmeans{}} ha confermato la scalabilità
     dell'approccio a dataset geospaziali di grandi dimensioni, con
-    un'accelerazione significativa e una perdita di inerzia trascurabile.
+    un'accelerazione di circa $3\times$ (0.141\,s vs 0.437\,s) e un
+    incremento dell'inerzia limitato al 2.4\%.
 \end{enumerate}
 
 \subsection{Limiti dello Studio}
@@ -1091,16 +1176,18 @@ pedologico. I principali risultati sono:
 \begin{itemize}
     \item \textbf{Assenza di ground-truth}: trattandosi di clustering
     non supervisionato, non è possibile calcolare metriche esterne
-    (Adjusted Rand Index, NMI). La validazione si basa su indici
-    interni e coerenza spaziale.
+    basate su etichette reali. La validazione si basa su indici
+    interni (Silhouette, SSE, DB, CH), concordanza tra algoritmi
+    (ARI, NMI) e coerenza spaziale.
 
     \item \textbf{Risoluzione spaziale}: la griglia SoilGrids a
     250\,m media le proprietà su pixel relativamente grandi, potendo
     mascherare variabilità locale.
 
-    \item \textbf{Scelta di $K$}: la forzatura agronomica del $K$ è
-    stata guidata da conoscenze di dominio, ma potrebbe beneficiare di
-    una validazione con dati di campo.
+    \item \textbf{Scelta di $K$}: la scelta di $K=6$ è stata guidata
+    da un bilanciamento tra metriche statistiche e conoscenze di dominio
+    agronomico, ma potrebbe beneficiare di una validazione con dati
+    di campo (profili pedologici reali).
 \end{itemize}
 
 \subsection{Sviluppi Futuri}

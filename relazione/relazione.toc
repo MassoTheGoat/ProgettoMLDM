@@ -11,35 +11,42 @@
 \contentsline {section}{\numberline {4}Analisi Esplorativa dei Dati (EDA)}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Estrazione e Pulizia dello Strato Superficiale}{6}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Controlli di Consistenza}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Analisi delle Distribuzioni}{6}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Matrice di Correlazione}{7}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Feature Engineering: Gradienti Verticali}{8}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Motivazione}{8}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Delta Totale}{8}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Gradienti Normalizzati}{9}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Selezione delle 15 Feature Finali}{9}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Analisi di Correlazione delle Feature Ingegnerizzate}{10}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Metodologia}{11}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Standardizzazione dei Dati}{11}{subsection.6.1}%
+\contentsline {subsection}{\numberline {4.3}Analisi delle Distribuzioni}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Matrice di Correlazione}{8}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Feature Engineering: Gradienti Verticali}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Motivazione}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Gradienti Normalizzati}{9}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Selezione delle 13 Feature Finali}{10}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Analisi di Correlazione delle Feature Ingegnerizzate}{11}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Metodologia}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Standardizzazione dei Dati}{12}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Campionamento per Ottimizzazione}{12}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Algoritmo 1: K-Means}{12}{subsection.6.3}%
-\contentsline {subsubsection}{\numberline {6.3.1}Ricerca del K Ottimale}{12}{subsubsection.6.3.1}%
-\contentsline {subsubsection}{\numberline {6.3.2}Forzatura Agronomica a K=5}{13}{subsubsection.6.3.2}%
-\contentsline {subsection}{\numberline {6.4}Algoritmo 2: DBSCAN}{13}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Algoritmo 3: Bisecting K-Means}{14}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Riduzione Dimensionale: PCA}{14}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Metriche di Validazione}{14}{subsection.6.7}%
-\contentsline {paragraph}{Coefficiente di Silhouette.}{14}{section*.10}%
-\contentsline {paragraph}{Sum of Squared Error (SSE / Inerzia).}{15}{section*.11}%
-\contentsline {section}{\numberline {7}Risultati Sperimentali}{15}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Ricerca del K Ottimale}{15}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Visualizzazione Avanzata con Yellowbrick}{16}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Proiezione PCA dei Cluster}{16}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Mappatura Spaziale dei Cluster}{17}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Profilazione dei Cluster}{18}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Validazione e Confronto dei Modelli}{19}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Efficienza Computazionale: K-Means vs Mini-Batch K-Means}{19}{subsection.7.7}%
-\contentsline {section}{\numberline {8}Discussione e Conclusioni}{20}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Sintesi dei Risultati}{20}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Limiti dello Studio}{20}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Sviluppi Futuri}{21}{subsection.8.3}%
+\contentsline {subsection}{\numberline {6.3}Algoritmo 1: K-Means}{13}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Ricerca del K Ottimale}{13}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}Scelta Finale: K=6}{14}{subsubsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.4}Algoritmo 2: DBSCAN}{14}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Algoritmo 3: Bisecting K-Means}{15}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Algoritmo 4: Gaussian Mixture Model (EM)}{15}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Riduzione Dimensionale: PCA}{17}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Metriche di Validazione}{17}{subsection.6.8}%
+\contentsline {paragraph}{Coefficiente di Silhouette.}{17}{section*.9}%
+\contentsline {paragraph}{Sum of Squared Error (SSE / Inerzia).}{17}{section*.10}%
+\contentsline {paragraph}{BIC e AIC.}{17}{section*.11}%
+\contentsline {paragraph}{Adjusted Rand Index (ARI).}{17}{section*.12}%
+\contentsline {paragraph}{Normalized Mutual Information (NMI).}{17}{section*.13}%
+\contentsline {section}{\numberline {7}Risultati Sperimentali}{18}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Ricerca del K Ottimale}{18}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Visualizzazione Avanzata con Yellowbrick}{19}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Proiezione PCA dei Cluster}{20}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Mappatura Spaziale dei Cluster}{21}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Risultati del GMM (Expectation-Maximization)}{22}{subsection.7.5}%
+\contentsline {subsubsection}{\numberline {7.5.1}Selezione del Modello: BIC e AIC}{22}{subsubsection.7.5.1}%
+\contentsline {subsubsection}{\numberline {7.5.2}Mappatura Spaziale GMM}{22}{subsubsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.6}Profilazione dei Cluster}{23}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Validazione e Confronto dei Modelli}{24}{subsection.7.7}%
+\contentsline {subsubsection}{\numberline {7.7.1}Concordanza tra Algoritmi: ARI e NMI}{24}{subsubsection.7.7.1}%
+\contentsline {subsection}{\numberline {7.8}Efficienza Computazionale: K-Means vs Mini-Batch K-Means}{25}{subsection.7.8}%
+\contentsline {section}{\numberline {8}Discussione e Conclusioni}{25}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Sintesi dei Risultati}{25}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Limiti dello Studio}{26}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Sviluppi Futuri}{27}{subsection.8.3}%
