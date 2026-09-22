@@ -46,6 +46,8 @@
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
+\usepackage{parskip}
+
 % ── Stile dei listing Python ──────────────────────────────────────────────
 \definecolor{codebg}{HTML}{F7F7F7}
 \definecolor{codecomment}{HTML}{6A737D}
@@ -169,12 +171,11 @@ del territorio.
 La conoscenza dettagliata delle proprietà del suolo riveste un ruolo
 fondamentale per la gestione agricola sostenibile, la pianificazione
 territoriale e la modellazione ambientale. In particolare, la
-\emph{variabilità verticale} del profilo pedologico — ovvero il modo in
-cui le proprietà chimico-fisiche cambiano scendendo in profondità —
+\emph{variabilità verticale} del profilo pedologico, ovvero il modo in
+cui le proprietà chimico-fisiche cambiano scendendo in profondità,
 fornisce informazioni cruciali sulla genesi del suolo, sulla presenza di
 orizzonti diagnostici (ad esempio orizzonti argillici o suole di
-lavorazione) e sul potenziale agronomico di un'area.
-
+lavorazione) e sul potenziale agronomico di un'area.\\
 La regione della \textbf{Capitanata}, situata nella provincia di Foggia,
 rappresenta una delle principali aree agricole d'Italia, caratterizzata
 da una notevole variabilità pedologica dovuta alla compresenza di
@@ -211,7 +212,7 @@ L'obiettivo di questo progetto è applicare tecniche di
 
 I dati utilizzati provengono da \textbf{SoilGrids}
 (\url{https://soilgrids.org}), un sistema globale di mappatura
-predittiva del suolo sviluppato dall'ISRIC -- World Soil Information.
+predittiva del suolo sviluppato dall'ISRIC World Soil Information.
 SoilGrids fornisce mappe raster a risoluzione di 250\,m per le
 principali proprietà chimico-fisiche del suolo, distribuite su sei
 strati di profondità standard: 0--5\,cm, 5--15\,cm, 15--30\,cm,
@@ -270,7 +271,9 @@ L'integrazione è avvenuta tramite le seguenti operazioni:
     controllo sul valore massimo determina se applicare il fattore di
     conversione previsto dal README di SoilGrids (es.\ divisione per 10
     per il pH, per 100 per l'azoto).
+    
 \end{enumerate}
+
 
 \begin{lstlisting}[caption={Integrazione dei file TIF con scaling condizionato.},label={lst:tif}]
 for var in variabili_tif:
@@ -349,7 +352,6 @@ Due verifiche aggiuntive garantiscono la coerenza interna del dataset:
 
 Le distribuzioni delle 13 variabili sono state visualizzate mediante
 istogrammi con sovrapposizione della stima kernel di densità (KDE).
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{distribuzioni_eda.png}
@@ -433,7 +435,6 @@ punti medi utilizzati sono: 2.5, 10.0, 22.5, 45.0, 80.0 e 150.0\,cm
         \bottomrule
     \end{tabular}
 \end{table}
-
 Questa normalizzazione è fondamentale perché gli strati SoilGrids hanno
 spessori diversi (5, 10, 15, 30, 40 e 100\,cm): senza normalizzazione,
 il gradiente tra 60--100\,cm e 100--200\,cm (distanza di 70\,cm tra i
@@ -672,14 +673,14 @@ distance}: calcolando la distanza dal $k$-esimo vicino più prossimo
 (con $k = 26$) e ordinando i valori in modo crescente, si individua
 il punto di ginocchio che segna il passaggio da ``densità
 intra-cluster'' a ``distanza inter-cluster''. Il valore scelto è stato
-$\varepsilon = 1.9$.
+$\varepsilon = 1.9$: l'euristica del metodo del gomito avrebbe dato $\varepsilon \approx 2.6$, ma con tale valore l'intero dataset sarebbe collassato in un singolo cluster senza alcun outlier. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{knn_distance.png}
     \caption{Grafico delle distanze K-NN per la determinazione
     dell'epsilon ottimale del DBSCAN. Il punto di ginocchio è stato
-    individuato nella regione $\varepsilon \approx 1.9$.}
+    individuato nella regione $\varepsilon \approx 2.6$.}
     \label{fig:knn}
 \end{figure}
 
@@ -931,7 +932,11 @@ a due componenti comprime 13 dimensioni.
     percentuali sugli assi indicano la varianza spiegata da ciascuna
     componente principale.}
     \label{fig:pca}
+
+    
 \end{figure}
+
+L'ispezione dei coefficienti di correlazione (loadings) delle prime due componenti principali ne chiarisce il significato fisico: la prima componente (PC1, 24.4\% della varianza) è dominata lungo la direzione positiva dai gradienti di argilla (\texttt{clay\_grad}) e negativamente da quelli di sabbia (\texttt{sand\_grad}), separando chiaramente i suoli a evoluzione tessiturale fine da quelli più grossolani (a sinistra). La seconda componente (PC2, 14.5\% della varianza) è correlata prevalentemente alle variazioni di densità apparente (\texttt{bdod\_grad}) e di conducibilità idraulica, consentendo di distinguere verso l'alto i suoli a rapida compattazione sub-superficiale.
 
 \subsection{Mappatura Spaziale dei Cluster}
 
@@ -961,7 +966,7 @@ geografica coerente con la geomorfologia della Capitanata
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{mappa_bisecting.png}
 
-        \caption{Bisecting \kmeans{} ($K=6$, colori allineati).}
+        \caption{Bisecting \kmeans{} ($K=6$).}
         \label{fig:mappa_bisecting}
     \end{subfigure}
     \caption{Confronto delle mappature spaziali per DBSCAN e Bisecting
@@ -969,15 +974,66 @@ geografica coerente con la geomorfologia della Capitanata
     \label{fig:mappe_alt}
 \end{figure}
 
+\paragraph{Analisi Critica del Fallimento di DBSCAN.}
+Sebbene l'euristica della curva $k$-NN avesse suggerito la combinazione parametrica $\epsilon = 2.6$ e $\text{min\_samples} = 26$, i risultati sperimentali (ottenuti con $\epsilon = 1.9$) mostrano un sostanziale collasso dell'algoritmo su un unico macro-cluster dominante, con il $6.20\%$ dei pixel marginali classificati come rumore. Le motivazioni teoriche e pratiche di tale comportamento sono principalmente due:
+
+\begin{enumerate}
+    \item \textbf{Continuità del continuum pedologico:} Il paradigma di DBSCAN presuppone regioni ad alta densità separate da ampie zone a densità prossima allo zero (vuoti dimensionali). Le variabili pedologiche e i rispettivi gradienti verticali, al contrario, variano nello spazio geografico e geometrico in maniera intrinsecamente continua e graduale. La densità dei punti nello spazio delle feature non presenta separazioni nette, bensì una transizione continua di densità che innesca una reazione a catena per densità-raggiungibilità (\emph{density-reachability}), agglomerando quasi la totalità dei dati in un'unica componente connessa.
+    
+    \item \textbf{Maledizione della dimensionalità (\emph{Curse of Dimensionality}):} Nello spazio $13$-dimensionale dei gradienti standardizzati, il contrasto tra la distanza dal vicino più prossimo e la distanza dal punto più lontano tende a ridursi notevolmente (\emph{distance concentration phenomenon}). In tale contesto iper-dimensionale, il concetto di raggio di vicinato globale ($\epsilon$) perde efficacia: un incremento infinitesimo di $\epsilon$ induce la fusione improvvisa di cluster contigui, mentre una minima diminuzione classifica arbitrariamente gran parte del dataset come rumore, rendendo insoddisfacente la separazione basata su densità stazionaria globale.
+\end{enumerate}
+Per tale motivo, gli approcci partizionali (K-Means) e probabilistici (GMM), operando mediante centri di aggregazione o funzioni di covarianza ellissoidali, risultano matematicamente e fisicamente più idonei per la discretizzazione di distribuzioni unimodali e continue tipiche delle scienze della Terra.
+
+\subsection{Profilazione dei Cluster (Risultati di K-Means)}
+
+La heatmap dei centroidi standardizzati (Z-score) permette di
+interpretare il ``profilo agronomico'' di ciascun cluster
+(Figura~\ref{fig:profili}). Valori fortemente positivi (rossi) indicano
+che il gradiente di una determinata variabile è nettamente superiore
+alla media regionale; valori negativi (blu) indicano il comportamento
+opposto. Questa rappresentazione consente di associare a ciascun cluster
+una descrizione pedologica qualitativa.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{profili_cluster.png}
+    \caption{Profilo agronomico dei 6 cluster basato sugli Z-score dei
+    centroidi. Valori positivi (rossi) indicano gradienti superiori alla
+    media regionale; valori negativi (blu) indicano gradienti inferiori.}
+    \label{fig:profili}
+\end{figure}
+
+Dall'analisi congiunta degli $Z$-score dei centroidi e della distribuzione spaziale sul territorio, emergono sei profili pedologici ben differenziati:
+
+\begin{itemize}
+    \item \textbf{Cluster 0 -- Dinamiche superficiali e compattazione profonda (Rosso):} 
+    Caratterizzato da marcati gradienti positivi superficiali di argilla ($+0.62$) e conduttività idraulica $K_{\text{sat}}$ ($+0.98$), accompagnati da un sensibile incremento della densità apparente negli orizzonti profondi (\texttt{bdod\_grad\_30-60\_to\_60-100} pari a $+0.93$). Spazialmente si concentra lungo la fascia sub-appenninica e pedemontana, riflettendo suoli con netto passaggio a substrati più compatti.
+
+    \item \textbf{Cluster 1 -- Lisciviazione argillosa e sviluppo dell'orizzonte $B_t$ (Blu):} 
+    Presenta il massimo accumulo verticale di argilla a profondità intermedie \\(\texttt{clay\_grad\_15-30\_to\_30-60} pari a $+1.07$) a fronte di un forte calo del gradiente di sabbia ($-1.06$). Identifica i suoli alluvionali di pianura soggetti a traslocazione e illuviazione di argilla (formazione di orizzonti diagnostici argillici $B_t$).
+
+    \item \textbf{Cluster 2 -- Rapida de-sostanziazione e suola di lavorazione (Viola):} 
+    È contraddistinto dall'anomalia negativa più estrema del dataset sul gradiente di carbonio organico (\texttt{soc\_grad\_0-5\_to\_5-15} a $-2.97$), associata a un forte gradiente positivo di densità apparente tra i 15 e i 60~cm ($+1.05$). Individua suoli intensamente coltivati soggetti a progressivo degrado organico superficiale e compattazione meccanica sub-superficiale (suola di aratura).
+
+    \item \textbf{Cluster 3 -- Orizzonti permeabili a lenta variazione di densità (Giallo):} 
+    Evidenzia un incremento del gradiente di $K_{\text{sat}}$ profonda ($+0.91$) e moderati gradienti argillosi superficiali ($+0.64$), con una densità apparente in netta controtendenza (\texttt{bdod\_grad\_15-30\_to\_30-60} pari a $-1.03$). Localizzato principalmente nel settore settentrionale della pianura, descrive suoli franchi a buona permeabilità strutturale.
+
+    \item \textbf{Cluster 4 -- Contatto litologico e accumulo di scheletro profondo (Rosa):} 
+    Rappresenta l'unico gruppo dominato da un marcato gradiente positivo di frammenti grossolani nello strato più profondo (\texttt{cfvo\_grad\_60-100\_to\_100-200} pari a $+0.96$), preservando al contempo un gradiente organico superficiale moderato ($+0.48$). Risulta coerente con le aree di transizione verso rilievi carsici o substrati rocciosi affioranti.
+
+    \item \textbf{Cluster 5 -- Profili verticalmente omogenei a drenaggio ridotto (Grigio):} 
+    Mostra gradienti prossimi allo zero o debolmente negativi su quasi tutte le frazioni granulometriche, accompagnati da una riduzione di conducibilità idraulica profonda ($-0.79$) e scheletro ($-0.40$). Rappresenta profili sedimentari stabili, scarsamente differenziati lungo i primi due metri di profondità.
+\end{itemize}
+
 \subsection{Risultati del GMM (Expectation-Maximization)}
 
-\subsubsection{Selezione del Modello: BIC e AIC}
 
-La Figura~\ref{fig:bic_aic} mostra l'andamento di BIC e AIC al variare
-del numero di componenti gaussiane ($K \in [2, 12]$). Entrambi i criteri
-decrescono all'aumentare di $K$, con un rallentamento della discesa
-intorno a $K=6$, confermando la ragionevolezza della scelta del modello
-a 6 componenti.
+\subsubsection{Selezione del Modello: BIC e AIC}
+La Figura~\ref{fig:bic_aic} illustra l'andamento del Bayesian Information Criterion (BIC) e dell'Akaike Information Criterion (AIC) al variare del numero di componenti gaussiane ($K \in [2, 12]$). 
+
+Entrambi i criteri mostrano una decrescita continua all'aumentare di $K$, comportamento tipico nei dataset geospaziali ad elevata numerosità campionaria dove l'aumento dei parametri liberi continua a incrementare marginalmente la log-verosimiglianza complessiva. Tuttavia, si osserva un chiaro cambio di pendenza con progressiva saturazione del gradiente di discesa attorno a $K=6$. 
+
+Poiché l'obiettivo primario è il confronto strutturale controllato tra paradigmi di clustering differenti (partizionale, gerarchico, probabilistico), si è optato per fissare $K=6$. Tale scelta garantisce parsimonia parametrica, previene l'eccessiva frammentazione agronomica e consente un confronto diretto e consistente delle partizioni territoriali a parità di cardinalità dei gruppi.
 
 \begin{figure}[H]
     \centering
@@ -1004,25 +1060,6 @@ di transizione pedologica.
     probabilità a posteriori massima (\emph{hard assignment}).
     Le etichette sono allineate al \kmeans{} per confronto diretto.}
     \label{fig:mappa_gmm}
-\end{figure}
-
-\subsection{Profilazione dei Cluster}
-
-La heatmap dei centroidi standardizzati (Z-score) permette di
-interpretare il ``profilo agronomico'' di ciascun cluster
-(Figura~\ref{fig:profili}). Valori fortemente positivi (rossi) indicano
-che il gradiente di una determinata variabile è nettamente superiore
-alla media regionale; valori negativi (blu) indicano il comportamento
-opposto. Questa rappresentazione consente di associare a ciascun cluster
-una descrizione pedologica qualitativa.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{profili_cluster.png}
-    \caption{Profilo agronomico dei 6 cluster basato sugli Z-score dei
-    centroidi. Valori positivi (rossi) indicano gradienti superiori alla
-    media regionale; valori negativi (blu) indicano gradienti inferiori.}
-    \label{fig:profili}
 \end{figure}
 
 \subsection{Validazione e Confronto dei Modelli}
@@ -1053,6 +1090,8 @@ Silhouette è stato calcolato escludendo i punti di rumore
     {\footnotesize $^\dagger$Il GMM ottimizza la log-verosimiglianza (BIC $= 2\,781\,079$, AIC $= 2\,775\,163$), non l'SSE.}
 \end{table}
 
+Si evidenzia che, nel dominio del monitoraggio ambientale continuo, valori del Coefficiente di Silhouette compresi tra $0.10$ e $0.20$ sono fisiologici e attesi: il profilo pedologico costituisce un continuum privo di frontiere nette o vuoti euclidei, pertanto la coesione geometrica riflette partizioni a transizione graduale piuttosto che partizioni isolate nello spazio delle fasi, come confermato dall'omogenea estensione orizzontale delle lame nel Silhouette Plot di Yellowbrick.
+
 \subsubsection{Concordanza tra Algoritmi: ARI e NMI}
 
 Per quantificare la concordanza strutturale tra le partizioni prodotte
@@ -1068,7 +1107,7 @@ e la Normalized Mutual Information (NMI)
         \toprule
         \textbf{Confronto} & \textbf{ARI} & \textbf{NMI} \\
         \midrule
-        K-Means vs Bisecting K-Means & 0.458 & -- \\
+        K-Means vs Bisecting K-Means & 0.458 & 0.546\\
         K-Means vs GMM (EM)          & 0.387 & 0.462 \\
         \bottomrule
     \end{tabular}
